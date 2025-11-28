@@ -1,16 +1,16 @@
 import Section from "@/components/atoms/section.component";
+import Button from "@/components/ui/button.component";
 import EmailInput from "@/components/ui/email-input.component";
 import PasswordInput from "@/components/ui/password-input.component";
-import UsernameInput from "@/components/ui/username-input.component";
 import Image from "next/image";
 import Link from "next/link";
 
 export default function Register() {
   return (
-    <Section className="flex md:flex-row flex-col md:space-x-12 space-x-0">
+    <Section className="flex md:flex-row flex-col md:space-x-12 space-x-0 pt-24">
       <div className="min-h-[400px] md:min-h-full w-full md:w-1/2 md:block hidden relative md:self-auto self-stretch">
         <Image
-          src="/dev/placeholder.jpg"
+          src="/dev/test.jpg"
           alt="Placeholder"
           fill
           className="object-cover rounded-lg"
@@ -29,9 +29,7 @@ export default function Register() {
             <legend className="legend">Password</legend>
             <PasswordInput />
           </div>
-          <button className="btn btn-neutral w-full" type="submit">
-            Login
-          </button>
+          <Button type="submit">Login</Button>
           <Link className="link block text-center" href={"/register"}>
             Don&apos;t have an account?
           </Link>

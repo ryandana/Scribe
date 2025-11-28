@@ -14,7 +14,7 @@ export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
   return (
     <header className="fixed bg-base-100 border-b/70 w-full z-10 mb-6">
-      <div className="navbar mx-auto container">
+      <div className="navbar mx-auto container px-4 md:px-6 lg:px-8">
         {/* Logo */}
         <div className="navbar-start">
           <Link href="/" className="normal-case text-xl font-semibold">

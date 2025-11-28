@@ -14,7 +14,7 @@ export default function NotFoundPage() {
             <h1 className="text-[150px] md:text-[200px] font-bold text-transparent bg-clip-text bg-linear-to-r from-primary to-secondary leading-none">
               404
             </h1>
-            <div className="absolute inset-0 blur-3xl opacity-20 bg-linear-to-r from-primary to-secondary"></div>
+            {/* <div className="absolute inset-0 blur-3xl opacity-20 bg-linear-to-r from-primary to-secondary"></div> */}
           </div>
           <div className="space-y-4 max-w-md">
             <h2 className="text-3xl md:text-4xl font-bold text-base-content">
@@ -26,15 +26,15 @@ export default function NotFoundPage() {
             </p>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-4 w-full max-w-md pt-4">
+          <div className="flex flex-col justify-center items-center sm:flex-row gap-4 w-full pt-4">
             <button
               onClick={() => window.history.back()}
-              className="btn btn-outline gap-2 flex-1"
+              className="btn btn-outline gap-2"
             >
               <IconArrowLeft size={20} />
               Go Back
             </button>
-            <Link href="/" className="btn btn-neutral gap-2 flex-1">
+            <Link href="/" className="btn btn-neutral gap-2">
               <IconHome size={20} />
               Home Page
             </Link>
