@@ -18,19 +18,19 @@ export default function Header() {
         {/* Logo */}
         <div className="navbar-start">
           <Link href="/" className="normal-case text-xl font-semibold">
-            Projek Final
+            Sacred.io
           </Link>
         </div>
 
         {/* Desktop Menu */}
         <div className="navbar-center md:flex hidden">
-          <div className="flex items-center space-x-3">
+          <div className="menu menu-horizontal p-0">
             {navLinks.map((link) => {
               return (
                 <Link
                   key={link.name}
                   href={link.href}
-                  className="btn btn-ghost btn-sm rounded-btn"
+                  className="btn btn-ghost btn-md rounded-btn normal-case text-md font-semibold"
                 >
                   {link.name}
                 </Link>

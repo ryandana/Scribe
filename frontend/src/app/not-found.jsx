@@ -29,12 +29,12 @@ export default function NotFoundPage() {
           <div className="flex flex-col justify-center items-center sm:flex-row gap-4 w-full pt-4">
             <button
               onClick={() => window.history.back()}
-              className="btn btn-outline gap-2"
+              className="btn gap-2 flex-1"
             >
               <IconArrowLeft size={20} />
               Go Back
             </button>
-            <Link href="/" className="btn btn-neutral gap-2">
+            <Link href="/" className="btn btn-neutral gap-2 flex-1">
               <IconHome size={20} />
               Home Page
             </Link>

@@ -8,7 +8,7 @@ import Link from "next/link";
 
 export default function Register() {
   return (
-    <Section className="flex md:flex-row flex-col md:space-x-12 space-x-0 pt-24">
+    <Section className="flex md:flex-row-reverse flex-col pt-24">
       <div className="min-h-[400px] md:min-h-full w-full md:w-1/2 md:block hidden relative md:self-auto self-stretch">
         <Image
           src="/dev/test.jpg"
