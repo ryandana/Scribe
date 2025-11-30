@@ -1,6 +1,6 @@
 import { IconUser } from "@tabler/icons-react";
 
-export default function UsernameInput() {
+export default function UsernameInput(props) {
   return (
     <>
       <label className="input validator w-full">
@@ -13,6 +13,7 @@ export default function UsernameInput() {
           minLength="3"
           maxLength="30"
           title="Only letters, numbers or dash"
+          {...props}
         />
       </label>
       <p className="validator-hint mt-0 hidden">

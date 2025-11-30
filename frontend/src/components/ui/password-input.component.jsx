@@ -1,6 +1,6 @@
 import { IconKey } from "@tabler/icons-react";
 
-export default function PasswordInput() {
+export default function PasswordInput(props) {
   return (
     <>
       <label className="input validator w-full">
@@ -12,6 +12,7 @@ export default function PasswordInput() {
           minLength="8"
           pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
           title="Must be more than 8 characters, including number, lowercase letter, uppercase letter"
+          {...props}
         />
       </label>
       <p className="validator-hint hidden mt-0">
