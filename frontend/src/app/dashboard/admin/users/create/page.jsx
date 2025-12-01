@@ -2,9 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Section from "@/components/atoms/section.component";
+import Breadcrumb from "@/components/ui/breadcrumb.component";
+import Button from "@/components/ui/button.component";
 import api from "@/lib/api";
-import Link from "next/link";
-import { IconArrowLeft } from "@tabler/icons-react";
 
 export default function CreateUserPage() {
   const router = useRouter();
@@ -91,191 +92,154 @@ export default function CreateUserPage() {
   };
 
   return (
-    <div className="min-h-screen bg-base-200 py-12 px-4">
-      <div className="max-w-2xl mx-auto">
-        <div className="flex items-center gap-4 mb-6">
-          <Link href="/dashboard/admin/users" className="btn btn-ghost btn-sm">
-            <IconArrowLeft size={18} />
-            Back
-          </Link>
-          <h1 className="text-3xl font-bold">Create User</h1>
-        </div>
+    <Section className="flex flex-col pt-8 pb-12">
+      <Breadcrumb
+        items={[
+          { label: "Admin", href: "/dashboard/admin" },
+          { label: "Users", href: "/dashboard/admin/users" },
+          { label: "Create User" },
+        ]}
+      />
 
-        <div className="card bg-base-100 shadow-lg">
-          <div className="card-body">
-            <form onSubmit={handleSubmit} className="space-y-4">
-              {error && (
-                <div className="alert alert-error">
-                  <span>{error}</span>
-                </div>
-              )}
+      <div className="flex flex-col items-center justify-center">
+        <h1 className="mb-8 font-semibold text-2xl text-center">
+          Create New User Account
+        </h1>
 
-              {/* Role Selection */}
-              <div className="form-control">
-                <label className="label">
-                  <span className="label-text font-semibold">Role *</span>
-                </label>
-                <select
-                  name="role"
-                  value={formData.role}
+        <fieldset className="fieldset w-full max-w-md px-4 md:px-0 space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {error && (
+              <div className="text-red-600 text-sm text-center">{error}</div>
+            )}
+
+            {/* Role Selection */}
+            <div className="column-gap">
+              <legend className="legend">Role *</legend>
+              <select
+                name="role"
+                value={formData.role}
+                onChange={handleChange}
+                className="select select-bordered w-full"
+              >
+                <option value="student">Student</option>
+                <option value="teacher">Teacher</option>
+                <option value="admin">Admin</option>
+              </select>
+            </div>
+
+            {/* Username */}
+            <div className="column-gap">
+              <legend className="legend">Username *</legend>
+              <input
+                type="text"
+                name="username"
+                value={formData.username}
+                onChange={handleChange}
+                placeholder="e.g., johndoe"
+                className="input input-bordered w-full"
+                required
+              />
+            </div>
+
+            {/* Nickname */}
+            <div className="column-gap">
+              <legend className="legend">Nickname</legend>
+              <input
+                type="text"
+                name="nickname"
+                value={formData.nickname}
+                onChange={handleChange}
+                placeholder="e.g., John Doe"
+                className="input input-bordered w-full"
+              />
+            </div>
+
+            {/* Email */}
+            <div className="column-gap">
+              <legend className="legend">Email *</legend>
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="john@example.com"
+                className="input input-bordered w-full"
+                required
+              />
+            </div>
+
+            {/* NIS - Only for Students */}
+            {formData.role === "student" && (
+              <div className="column-gap">
+                <legend className="legend">NIS *</legend>
+                <input
+                  type="number"
+                  name="nis"
+                  value={formData.nis}
                   onChange={handleChange}
-                  className="select select-bordered"
+                  placeholder="Student ID"
+                  className="input input-bordered w-full"
+                  required={formData.role === "student"}
+                />
+              </div>
+            )}
+
+            {/* Class - Only for Students */}
+            {formData.role === "student" && (
+              <div className="column-gap">
+                <legend className="legend">Class *</legend>
+                <select
+                  name="classId"
+                  value={formData.classId}
+                  onChange={handleChange}
+                  className="select select-bordered w-full"
+                  required={formData.role === "student"}
                 >
-                  <option value="student">Student</option>
-                  <option value="teacher">Teacher</option>
-                  <option value="admin">Admin</option>
+                  <option value="">Select a class</option>
+                  {classes.map((cls) => (
+                    <option key={cls._id} value={cls._id}>
+                      {cls.className}
+                    </option>
+                  ))}
                 </select>
               </div>
+            )}
 
-              {/* Username */}
-              <div className="form-control">
-                <label className="label">
-                  <span className="label-text font-semibold">Username *</span>
-                </label>
-                <input
-                  type="text"
-                  name="username"
-                  value={formData.username}
-                  onChange={handleChange}
-                  placeholder="e.g., johndoe"
-                  className="input input-bordered"
-                  required
-                />
-              </div>
+            {/* Password */}
+            <div className="column-gap">
+              <legend className="legend">Password *</legend>
+              <input
+                type="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                placeholder="••••••••"
+                className="input input-bordered w-full"
+                required
+              />
+            </div>
 
-              {/* Nickname */}
-              <div className="form-control">
-                <label className="label">
-                  <span className="label-text font-semibold">Nickname</span>
-                </label>
-                <input
-                  type="text"
-                  name="nickname"
-                  value={formData.nickname}
-                  onChange={handleChange}
-                  placeholder="e.g., John Doe"
-                  className="input input-bordered"
-                />
-              </div>
+            {/* Confirm Password */}
+            <div className="column-gap">
+              <legend className="legend">Confirm Password *</legend>
+              <input
+                type="password"
+                name="confirmPassword"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                placeholder="••••••••"
+                className="input input-bordered w-full"
+                required
+              />
+            </div>
 
-              {/* Email */}
-              <div className="form-control">
-                <label className="label">
-                  <span className="label-text font-semibold">Email *</span>
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  placeholder="john@example.com"
-                  className="input input-bordered"
-                  required
-                />
-              </div>
-
-              {/* NIS - Only for Students */}
-              {formData.role === "student" && (
-                <div className="form-control">
-                  <label className="label">
-                    <span className="label-text font-semibold">NIS *</span>
-                  </label>
-                  <input
-                    type="number"
-                    name="nis"
-                    value={formData.nis}
-                    onChange={handleChange}
-                    placeholder="Student ID"
-                    className="input input-bordered"
-                    required={formData.role === "student"}
-                  />
-                </div>
-              )}
-
-              {/* Class - Only for Students */}
-              {formData.role === "student" && (
-                <div className="form-control">
-                  <label className="label">
-                    <span className="label-text font-semibold">Class *</span>
-                  </label>
-                  <select
-                    name="classId"
-                    value={formData.classId}
-                    onChange={handleChange}
-                    className="select select-bordered"
-                    required={formData.role === "student"}
-                  >
-                    <option value="">Select a class</option>
-                    {classes.map((cls) => (
-                      <option key={cls._id} value={cls._id}>
-                        {cls.className}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              )}
-
-              {/* Password */}
-              <div className="form-control">
-                <label className="label">
-                  <span className="label-text font-semibold">Password *</span>
-                </label>
-                <input
-                  type="password"
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  placeholder="••••••••"
-                  className="input input-bordered"
-                  required
-                />
-              </div>
-
-              {/* Confirm Password */}
-              <div className="form-control">
-                <label className="label">
-                  <span className="label-text font-semibold">
-                    Confirm Password *
-                  </span>
-                </label>
-                <input
-                  type="password"
-                  name="confirmPassword"
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  placeholder="••••••••"
-                  className="input input-bordered"
-                  required
-                />
-              </div>
-
-              {/* Submit and Cancel Buttons */}
-              <div className="form-control mt-6 flex flex-row gap-2">
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="btn btn-primary flex-1"
-                >
-                  {loading ? (
-                    <>
-                      <span className="loading loading-spinner loading-sm"></span>
-                      Creating...
-                    </>
-                  ) : (
-                    "Create User"
-                  )}
-                </button>
-                <Link
-                  href="/dashboard/admin/users"
-                  className="btn btn-ghost flex-1"
-                >
-                  Cancel
-                </Link>
-              </div>
-            </form>
-          </div>
-        </div>
+            {/* Submit Button */}
+            <Button type="submit" disabled={loading}>
+              {loading ? "Creating..." : "Create User"}
+            </Button>
+          </form>
+        </fieldset>
       </div>
-    </div>
+    </Section>
   );
 }

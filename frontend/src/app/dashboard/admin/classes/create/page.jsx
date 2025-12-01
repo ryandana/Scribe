@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Section from "@/components/atoms/section.component";
+import Breadcrumb from "@/components/ui/breadcrumb.component";
+import Button from "@/components/ui/button.component";
 import api from "@/lib/api";
-import Link from "next/link";
-import { IconArrowLeft } from "@tabler/icons-react";
 
 export default function CreateClassPage() {
   const router = useRouter();
@@ -52,107 +53,77 @@ export default function CreateClassPage() {
   };
 
   return (
-    <div className="min-h-screen bg-base-200 py-12 px-4">
-      <div className="max-w-2xl mx-auto">
-        <div className="flex items-center gap-4 mb-6">
-          <Link
-            href="/dashboard/admin/classes"
-            className="btn btn-ghost btn-sm"
-          >
-            <IconArrowLeft size={18} />
-            Back
-          </Link>
-          <h1 className="text-3xl font-bold">Create Class</h1>
-        </div>
+    <Section className="flex flex-col pt-8 pb-12">
+      <Breadcrumb
+        items={[
+          { label: "Admin", href: "/dashboard/admin" },
+          { label: "Classes", href: "/dashboard/admin/classes" },
+          { label: "Create Class" },
+        ]}
+      />
 
-        <div className="card bg-base-100 shadow-lg">
-          <div className="card-body">
-            <form onSubmit={handleSubmit} className="space-y-4">
-              {error && (
-                <div className="alert alert-error">
-                  <span>{error}</span>
-                </div>
-              )}
+      <div className="flex flex-col items-center justify-center">
+        <h1 className="mb-8 font-semibold text-2xl text-center">
+          Create New Class
+        </h1>
 
-              {/* Class Name */}
-              <div className="form-control">
-                <label className="label">
-                  <span className="label-text font-semibold">Class Name *</span>
-                </label>
-                <input
-                  type="text"
-                  name="className"
-                  value={formData.className}
-                  onChange={handleChange}
-                  placeholder="e.g., XI RPL A"
-                  className="input input-bordered"
-                  required
-                />
-              </div>
+        <fieldset className="fieldset w-full max-w-md px-4 md:px-0 space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {error && (
+              <div className="text-red-600 text-sm text-center">{error}</div>
+            )}
 
-              {/* Grade Level */}
-              <div className="form-control">
-                <label className="label">
-                  <span className="label-text font-semibold">
-                    Grade Level *
-                  </span>
-                </label>
-                <select
-                  name="gradeLevel"
-                  value={formData.gradeLevel}
-                  onChange={handleChange}
-                  className="select select-bordered"
-                  required
-                >
-                  <option value="X">Grade 10</option>
-                  <option value="XI">Grade 11</option>
-                  <option value="XII">Grade 12</option>
-                </select>
-              </div>
+            {/* Class Name */}
+            <div className="column-gap">
+              <legend className="legend">Class Name *</legend>
+              <input
+                type="text"
+                name="className"
+                value={formData.className}
+                onChange={handleChange}
+                placeholder="e.g., XI RPL A"
+                className="input input-bordered w-full"
+                required
+              />
+            </div>
 
-              {/* Major */}
-              <div className="form-control">
-                <label className="label">
-                  <span className="label-text font-semibold">Major *</span>
-                </label>
-                <input
-                  type="text"
-                  name="major"
-                  value={formData.major}
-                  onChange={handleChange}
-                  placeholder="e.g., Software Development"
-                  className="input input-bordered"
-                  required
-                />
-              </div>
+            {/* Grade Level */}
+            <div className="column-gap">
+              <legend className="legend">Grade Level *</legend>
+              <select
+                name="gradeLevel"
+                value={formData.gradeLevel}
+                onChange={handleChange}
+                className="select select-bordered w-full"
+                required
+              >
+                <option value="X">Grade 10</option>
+                <option value="XI">Grade 11</option>
+                <option value="XII">Grade 12</option>
+              </select>
+            </div>
 
-              {/* Submit and Cancel Buttons */}
-              <div className="form-control mt-6 flex flex-row gap-2">
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="btn btn-primary flex-1"
-                >
-                  {loading ? (
-                    <>
-                      <span className="loading loading-spinner loading-sm"></span>
-                      Creating...
-                    </>
-                  ) : (
-                    "Create Class"
-                  )}
-                </button>
-                <Link
-                  href="/dashboard/admin/classes"
-                  className="btn btn-ghost flex-1"
-                >
-                  Cancel
-                </Link>
-              </div>
-            </form>
-          </div>
-        </div>
+            {/* Major */}
+            <div className="column-gap">
+              <legend className="legend">Major *</legend>
+              <input
+                type="text"
+                name="major"
+                value={formData.major}
+                onChange={handleChange}
+                placeholder="e.g., Software Development"
+                className="input input-bordered w-full"
+                required
+              />
+            </div>
+
+            {/* Submit Button */}
+            <Button type="submit" disabled={loading}>
+              {loading ? "Creating..." : "Create Class"}
+            </Button>
+          </form>
+        </fieldset>
       </div>
-    </div>
+    </Section>
   );
 }
