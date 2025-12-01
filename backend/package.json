@@ -7,7 +7,8 @@
     "dev:bun": "bun --watch --bun src/server.js",
     "start:bun": "bun --bun src/server.js",
     "dev": "nodemon src/server.js",
-    "start": "node src/server.js"
+    "start": "node src/server.js",
+    "lint": "eslint --fix src"
   },
   "keywords": [],
   "author": "ryandana",

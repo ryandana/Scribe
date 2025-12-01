@@ -1,17 +1,25 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
-import {User, Class} from "../models/user.model.js";
+import { User } from "../models/user.model.js";
 
 export const register = async (req, res) => {
     try {
-        const { email, username, password } = req.body;
-        const exist = await User.findOne({ email });
+        const {
+            email,
+            username,
+            password,
+            role = "student",
+            classId = null,
+            nis,
+        } = req.body;
 
-        if (exist) {
-            return res.status(400).json({
-                message: "Email already exists",
-            });
-        }
+        const existEmail = await User.findOne({ email });
+        if (existEmail)
+            return res.status(400).json({ message: "Email already exists" });
+
+        const existUser = await User.findOne({ username });
+        if (existUser)
+            return res.status(400).json({ message: "Username already taken" });
 
         const hashedPassword = await bcrypt.hash(password, 12);
 
@@ -20,14 +28,21 @@ export const register = async (req, res) => {
             username,
             nickname: username,
             password: hashedPassword,
+            role,
+            classId,
+            nis: role === "student" ? nis : null,
         });
 
-        return res.status(201).json(createUser);
+        const safeUser = createUser.toObject();
+        delete safeUser.password;
+
+        return res.status(201).json({
+            message: "User registered successfully",
+            user: safeUser,
+        });
     } catch (error) {
         console.error(error.message);
-        return res.status(500).json({
-            message: " Internal Server error",
-        });
+        return res.status(500).json({ message: "Internal server error" });
     }
 };
 
@@ -129,6 +144,25 @@ export const update = async (req, res) => {
         console.error(error.message);
         return res.status(500).json({
             message: " Internal Server error",
+        });
+    }
+};
+
+export const getAllUsers = async (req, res) => {
+    try {
+        const users = await User.find().populate("classId").select("-password");
+
+        return res.status(200).json({
+            message: "Users fetched successfully",
+            data: users,
+            meta: {
+                count: users.length,
+            },
+        });
+    } catch (error) {
+        console.error(error.message);
+        return res.status(500).json({
+            message: "Internal server error",
         });
     }
 };

@@ -25,7 +25,13 @@ export default function Register() {
   // Redirect if already logged in
   useEffect(() => {
     if (!authLoading && user) {
-      router.push("/");
+      if (user.role === "student") {
+        router.push("/dashboard/student");
+      } else if (user.role === "teacher") {
+        router.push("/dashboard/teacher");
+      } else if (user.role === "admin") {
+        router.push("/dashboard/admin");
+      }
     }
   }, [user, authLoading, router]);
 

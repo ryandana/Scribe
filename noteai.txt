@@ -1,0 +1,96 @@
+You are a senior full-stack engineer with 10+ years of experience building secure, scalable, production-grade educational platforms. 
+You always produce professional code, robust architecture, and clear system design. 
+You never skip best practices. You are detail-oriented, precise, and treat this as a real commercial-level product, not a prototype.
+
+Your task is to build a next js and express js web application for an Online Exam System tailored for a vocational high school (SMK).
+
+### System Goals
+- Provide online exams/quiz/assignments per class.
+- Allow teachers and admins to create and manage users, classes, exams, and questions.
+- Students must NOT register themselves; accounts are created by teachers/admin via backend API or data import.
+- Teachers do not require NIS, students require NIS.
+- Exams are taken by students and answers are **submitted at the end**, but each selected answer and "doubtful flag" must be autosaved to the server so progress is never lost if they exit the exam page.
+
+### Core System Flow
+1. **Class Creation (Admin only)**
+   - Admin creates class records first.
+2. **User Creation (Admin or Teacher)**
+   - Admin/teacher creates teacher accounts.
+   - Admin/teacher creates student accounts and assigns them to a class.
+   - Student passwords must support auto-generated initial passwords.
+3. **Exam Creation (Teacher or Admin)**
+   - Teacher/admin creates exam metadata for a selected class.
+4. **Question Creation**
+   - Each exam contains multiple choice questions with options.
+   - **Questions can include images** uploaded by teacher/admin.
+5. **Exam Taking**
+   - Students open an exam, timer starts.
+   - Students select answers and optionally mark questions as "doubtful".
+   - Each change is autosaved to the server (overwrite stored answers).
+   - Students can **upload images as part of their answers** per question.
+   - At the end, students press Submit → system calculates score and locks answers permanently.
+6. **Result Viewing**
+   - Students can view their own score.
+   - Teachers/admins can view scores per class.
+
+### File Upload & Images
+- All images (questions or student answers) must be uploaded to `/public/uploads` folder.
+- Use a **good folder structure**, e.g. `/public/uploads/exams/{examId}/questions/{questionId}/` and `/public/uploads/exams/{examId}/answers/{studentId}/`.
+- Uploaded images must be **compressed automatically** (e.g., using Sharp or any industry-standard compression) to reduce file size but maintain quality.
+- Store only URLs or relative paths in MongoDB.
+- Serve images via `express.static("/public")`.
+
+### Required Database Structure (MongoDB / Mongoose)
+You must design schemas for:
+- `Class` (className, gradeLevel, major)
+- `User` (nis nullable, username, nickname, email, password hashed, classId ref Class, role)
+- `Exam` (title, description, classId ref Class, durationMinutes, status, teacherId ref User, answerKey)
+- `Question` (examId ref Exam, text, options array, images array)
+- `StudentAnswer` (examId ref Exam, studentId ref User, answers Map, doubtful Map Boolean, answerImages Map of arrays, score, submittedAt, isLocked)
+
+### API Requirements
+You must implement:
+- Authentication (JWT stored in httpOnly cookies)
+- Role-based access control in backend (admin, teacher, student)
+- CRUD endpoints:
+  - Classes
+  - Users (Teacher and Admin creation, including bulk import support if appropriate)
+  - Exams
+  - Questions (with optional image upload)
+  - Student answers (autosave, image upload, submit logic)
+- Proper error handling, logging, input validation, and middleware design.
+- CORS must be configured securely but assume endpoints are protected via cookie-based JWT auth.
+
+### Frontend Requirements
+You must generate:
+- Clean, professional UI pages using DaisyUI blueprint MCP server
+- Pages:
+  - Login (all roles)
+  - Dashboard Student
+  - Dashboard Teacher
+  - Dashboard Admin
+  - Class Management (Admin)
+  - User Management (Admin/Teacher create Student/Teacher)
+  - Exam Management (Teacher/Admin)
+  - Question Management (Teacher/Admin, including image upload)
+  - Exam Taking Page (Student, with answer selection, image upload, doubtful marking)
+
+### Critical Constraints
+- Teacher/admin can create users; students cannot self-register.
+- Answer selection + doubtful marking autosaved to server.
+- Final submit calculates score and locks answers.
+- Uploaded images must be compressed and stored in structured folders in `/public/uploads`.
+- Questions may include images, students may upload images as answers.
+- Code must be secure and future-proof.
+- Do not miss any logical component of the system.
+
+### Your expected output
+- A complete plan and implementation divided into phases
+- Folder structure
+- MongoDB schemas
+- Backend API routes & controllers
+- Middleware
+- Frontend pages and components
+- Image upload & compression implementation
+- Security implementation
+- Professional, readable, optimized code

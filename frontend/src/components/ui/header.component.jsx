@@ -1,6 +1,6 @@
 "use client";
 
-import { IconMenu3, IconLogout } from "@tabler/icons-react";
+import { IconMenu3, IconLogout, IconDashboard } from "@tabler/icons-react";
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -12,6 +12,19 @@ const navLinks = [
   { name: "Contact", href: "/contact" },
 ];
 
+const getDashboardLink = (role) => {
+  switch (role) {
+    case "student":
+      return "/dashboard/student";
+    case "teacher":
+      return "/dashboard/teacher";
+    case "admin":
+      return "/dashboard/admin";
+    default:
+      return "/";
+  }
+};
+
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
   const { user, loading, logout } = useAuth();
@@ -19,8 +32,10 @@ export default function Header() {
 
   const handleLogout = async () => {
     await logout();
-    router.push("/");
+    router.push("/login");
   };
+
+  const getDashboardHref = () => getDashboardLink(user?.role);
 
   return (
     <header className="fixed bg-base-100 border-b/70 w-full z-10 mb-6">
@@ -28,26 +43,28 @@ export default function Header() {
         {/* Logo */}
         <div className="navbar-start">
           <Link href="/" className="normal-case text-xl font-semibold">
-            Sacred.io
+            ExamHub
           </Link>
         </div>
 
-        {/* Desktop Menu */}
-        <div className="navbar-center md:flex hidden">
-          <div className="menu menu-horizontal p-0">
-            {navLinks.map((link) => {
-              return (
-                <Link
-                  key={link.name}
-                  href={link.href}
-                  className="btn btn-ghost btn-md rounded-btn normal-case text-md font-semibold"
-                >
-                  {link.name}
-                </Link>
-              );
-            })}
+        {/* Desktop Menu - Only show for non-authenticated users */}
+        {!user && (
+          <div className="navbar-center md:flex hidden">
+            <div className="menu menu-horizontal p-0">
+              {navLinks.map((link) => {
+                return (
+                  <Link
+                    key={link.name}
+                    href={link.href}
+                    className="btn btn-ghost btn-md rounded-btn normal-case text-md font-semibold"
+                  >
+                    {link.name}
+                  </Link>
+                );
+              })}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Mobile Menu */}
         <div className="navbar-end md:hidden">
@@ -65,9 +82,19 @@ export default function Header() {
             <div className="loading loading-spinner loading-sm"></div>
           ) : user ? (
             <>
+              {/* Dashboard Button */}
+              <Link
+                href={getDashboardHref()}
+                className="btn btn-ghost btn-sm gap-2"
+              >
+                <IconDashboard size={18} />
+                Dashboard
+              </Link>
+
+              {/* User Menu */}
               <div className="dropdown dropdown-end">
                 <button className="btn btn-ghost btn-circle avatar placeholder">
-                  <div className="bg-neutral text-neutral-content rounded-full w-10 flex items-center justify-center">
+                  <div className="bg-primary text-primary-content rounded-full w-10 flex items-center justify-center">
                     {user?.nickname ? (
                       <span className="text-xl font-bold">
                         {user.nickname.charAt(0).toUpperCase()}
@@ -78,8 +105,11 @@ export default function Header() {
                   </div>
                 </button>
                 <ul className="dropdown-content z-50 menu p-2 shadow bg-base-100 rounded-box w-52">
+                  <li className="menu-title">
+                    <span>{user?.nickname}</span>
+                  </li>
                   <li>
-                    <Link href="/profile">Profile</Link>
+                    <Link href={`${getDashboardHref()}/profile`}>Profile</Link>
                   </li>
                   <li>
                     <button onClick={handleLogout} className="text-error">

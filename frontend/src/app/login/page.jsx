@@ -22,7 +22,13 @@ export default function Login() {
   // Redirect if already logged in
   useEffect(() => {
     if (!authLoading && user) {
-      router.push("/");
+      if (user.role === "student") {
+        router.push("/dashboard/student");
+      } else if (user.role === "teacher") {
+        router.push("/dashboard/teacher");
+      } else if (user.role === "admin") {
+        router.push("/dashboard/admin");
+      }
     }
   }, [user, authLoading, router]);
 
@@ -36,7 +42,15 @@ export default function Login() {
       // Refresh user context to populate avatar immediately
       await refreshUser();
 
-      router.push("/");
+      // Redirect to appropriate dashboard based on role
+      const updatedUser = await api.get("/api/auth/me");
+      if (updatedUser.role === "student") {
+        router.push("/dashboard/student");
+      } else if (updatedUser.role === "teacher") {
+        router.push("/dashboard/teacher");
+      } else if (updatedUser.role === "admin") {
+        router.push("/dashboard/admin");
+      }
     } catch (err) {
       setError(err?.data?.message || err.message || "Login failed");
     } finally {
