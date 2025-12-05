@@ -7,7 +7,7 @@ const authMiddleware = async (req, res, next) => {
 
         if (!token) {
             return res.status(401).json({
-                message: "Unauthorized"
+                message: "Unauthorized",
             });
         }
 
@@ -18,9 +18,9 @@ const authMiddleware = async (req, res, next) => {
     } catch (error) {
         console.error(error.message);
         return res.status(401).json({
-            message: "Unauthorized token"
+            message: "Unauthorized token",
         });
     }
-}
+};
 
-export default authMiddleware
+export default authMiddleware;

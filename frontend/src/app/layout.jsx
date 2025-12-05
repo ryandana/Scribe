@@ -1,8 +1,9 @@
-import { Poppins, JetBrains_Mono } from "next/font/google";
+import { Poppins, JetBrains_Mono, Crimson_Pro, Inter } from "next/font/google";
 import "./globals.css";
-import SpeedDial from "@/components/ui/speed-dial.component";
 import Header from "@/components/ui/header.component";
 import { AuthProvider } from "@/context/auth.context";
+
+
 
 const poppinsSans = Poppins({
   variable: "--font-poppins-sans",
@@ -24,11 +25,10 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body
-        className={`${poppinsSans.variable} ${jetbrainsMono.variable} antialiased`}
+        className={` ${poppinsSans.variable} ${jetbrainsMono.variable} antialiased`}
       >
         <AuthProvider>
           <Header />
-          <SpeedDial />
           {children}
         </AuthProvider>
       </body>

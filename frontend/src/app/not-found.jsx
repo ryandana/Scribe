@@ -11,7 +11,7 @@ export default function NotFoundPage() {
       <div className="container mx-auto px-4">
         <div className="flex flex-col items-center justify-center text-center space-y-8">
           <div className="relative">
-            <h1 className="text-[150px] md:text-[200px] font-bold text-transparent bg-clip-text bg-linear-to-r from-primary to-secondary leading-none">
+            <h1 className="text-[150px] font-inter-sans md:text-[200px] font-bold text-transparent bg-clip-text bg-linear-to-r from-primary to-secondary leading-none">
               404
             </h1>
             {/* <div className="absolute inset-0 blur-3xl opacity-20 bg-linear-to-r from-primary to-secondary"></div> */}

@@ -28,7 +28,7 @@ export default function Header() {
         {/* Logo */}
         <div className="navbar-start">
           <Link href="/" className="normal-case text-xl font-semibold">
-            Sacred.io
+            Scribe
           </Link>
         </div>
 
