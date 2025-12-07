@@ -17,7 +17,7 @@ export default function StreamChat() {
         "x-api-key": process.env.NEXT_PUBLIC_AI_KEY,
       },
       body: JSON.stringify({
-        model: "gemma3:1b",
+        model: "llama3.2:3b",
         messages: [{ role: "user", content: msg }],
       }),
     });
@@ -65,6 +65,7 @@ export default function StreamChat() {
 
       {/* Render Markdown */}
       <div className="prose dark:prose-invert max-w-none mt-4">
+        
         <ReactMarkdown>{output}</ReactMarkdown>
       </div>
     </div>
