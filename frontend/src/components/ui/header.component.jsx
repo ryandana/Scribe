@@ -91,7 +91,10 @@ export default function Header() {
           {/* Desktop Auth Section */}
           <div className="navbar-end space-x-3 md:flex hidden">
             {loading ? (
-              <div className="loading loading-spinner loading-sm"></div>
+              <>
+                <div className="skeleton w-10 h-10 rounded-full"></div>
+                <div className="skeleton h-10 w-20 rounded-lg"></div>
+              </>
             ) : user ? (
               <>
                 <div className="dropdown dropdown-end">
@@ -171,19 +174,22 @@ export default function Header() {
               {/* Navigation Links */}
               {navLinks.map((link) => (
                 <Link
-                  key={link.title}
+                  key={link.name}
                   href={link.href}
                   onClick={() => setIsOpen(false)}
                   className="btn btn-ghost btn-lg w-full"
                 >
-                  {link.title}
+                  {link.name}
                 </Link>
               ))}
 
               {/* Auth Section */}
               <div className="divider"></div>
               {loading ? (
-                <div className="loading loading-spinner loading-lg"></div>
+                <>
+                  <div className="skeleton h-12 w-full rounded-lg"></div>
+                  <div className="skeleton h-12 w-full rounded-lg"></div>
+                </>
               ) : user ? (
                 <>
                   <Link

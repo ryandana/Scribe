@@ -12,6 +12,7 @@ import Link from "next/link";
 import api from "@/lib/api";
 import { useAuth } from "@/context/auth.context";
 import { useToast } from "@/context/toast.context";
+import AuthFormSkeleton from "@/components/skeletons/auth-form.skeleton";
 
 export default function Register() {
   const router = useRouter();
@@ -76,7 +77,7 @@ export default function Register() {
   if (authLoading) {
     return (
       <Section className="flex items-center justify-center pt-24 min-h-screen">
-        <div className="loading loading-spinner loading-lg"></div>
+        <AuthFormSkeleton />
       </Section>
     );
   }

@@ -17,6 +17,7 @@ import { useToast } from "@/context/toast.context";
 import AISidebar from "@/components/ui/ai-sidebar.component";
 import rehypeHighlight from "rehype-highlight";
 import "highlight.js/styles/atom-one-dark.css";
+import WritePageSkeleton from "@/components/skeletons/write-page.skeleton";
 
 function WritePageContent() {
     const { user, loading: authLoading } = useAuth();
@@ -28,6 +29,7 @@ function WritePageContent() {
     const { addToast } = useToast();
 
     const [title, setTitle] = useState("");
+    const [shortDescription, setShortDescription] = useState("");
     const [description, setDescription] = useState(""); // This is the body
     const [tags, setTags] = useState("");
     const [thumbnail, setThumbnail] = useState(null);
@@ -73,6 +75,7 @@ function WritePageContent() {
                     setFetching(true);
                     const post = await api.get(`/api/posts/${editId}`);
                     setTitle(post.title);
+                    setShortDescription(post.shortDescription || "");
                     setDescription(post.body);
                     setTags(post.tags.join(", "));
                     if (post.thumbnail_url) {
@@ -126,8 +129,8 @@ function WritePageContent() {
         setLoading(true);
 
         // Validation: slightly different for edit mode (thumbnail might not change)
-        if (!title || !description) {
-            setError("Please fill in Title and Body.");
+        if (!title.trim() || !shortDescription.trim() || !description.trim() || !tags.trim()) {
+            setError("All fields (Title, Short Description, Body, Tags) are required.");
             setLoading(false);
             return;
         }
@@ -141,6 +144,7 @@ function WritePageContent() {
         try {
             const formData = new FormData();
             formData.append("title", title);
+            formData.append("shortDescription", shortDescription);
             formData.append("body", description);
             if (thumbnail) {
                 formData.append("thumbnail_url", thumbnail);
@@ -168,11 +172,7 @@ function WritePageContent() {
     };
 
     if (fetching) {
-        return (
-            <div className="flex justify-center items-center h-screen">
-                <span className="loading loading-spinner loading-lg"></span>
-            </div>
-        );
+        return <WritePageSkeleton />;
     }
 
     return (
@@ -258,6 +258,21 @@ function WritePageContent() {
                         />
                     </div>
 
+                    {/* Short Description */}
+                    <div>
+                        <textarea
+                            placeholder="Short description for preview (max 200 characters)..."
+                            className="w-full text-base text-gray-600 placeholder-gray-300 border-none focus:ring-0 resize-none bg-transparent outline-none p-0"
+                            rows={2}
+                            maxLength={200}
+                            value={shortDescription}
+                            onChange={(e) => setShortDescription(e.target.value)}
+                        />
+                        <div className="text-xs text-gray-400 mt-1">
+                            {shortDescription.length}/200 characters
+                        </div>
+                    </div>
+
                     {/* Tags */}
                     <div>
                         <input
@@ -320,7 +335,7 @@ function WritePageContent() {
 
 export default function WritePage() {
     return (
-        <Suspense fallback={<div className="flex justify-center items-center h-screen"><span className="loading loading-spinner loading-lg"></span></div>}>
+        <Suspense fallback={<WritePageSkeleton />}>
             <WritePageContent />
         </Suspense>
     );

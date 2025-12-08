@@ -40,11 +40,15 @@ export default function PostsList({ posts }) {
               <h2 className="md:text-2xl text-xl font-semibold group-hover:text-primary transition-all duration-100">
                 {post.title}
               </h2>
-              <div className="prose prose-sm md:block hidden">
-                <ReactMarkdown remarkPlugins={[remarkGfm]}
-                  rehypePlugins={[rehypeSanitize]}>
-                  {previewText(post.body)}
-                </ReactMarkdown>
+              <div className="prose prose-sm md:block hidden text-base-content/70">
+                {post.shortDescription ? (
+                  <p className="line-clamp-2">{post.shortDescription}</p>
+                ) : (
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}
+                    rehypePlugins={[rehypeSanitize]}>
+                    {previewText(post.body)}
+                  </ReactMarkdown>
+                )}
               </div>
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-2 md:text-sm text-xs">

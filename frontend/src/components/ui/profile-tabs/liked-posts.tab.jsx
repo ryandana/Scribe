@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import api from "@/lib/api";
 import PostsList from "@/components/ui/posts-list.component";
+import PostsListSkeleton from "@/components/skeletons/posts-list.skeleton";
 
 export default function LikedPostsTab() {
     const [posts, setPosts] = useState([]);
@@ -22,10 +23,10 @@ export default function LikedPostsTab() {
         fetchLikedPosts();
     }, []);
 
-    if (loading) return <div className="loading loading-spinner loading-md"></div>;
+    if (loading) return <PostsListSkeleton count={3} />;
 
     return (
-        <div className="space-y-4">
+        <div className="space-y-8 flex flex-col">
             {posts.length === 0 ? (
                 <div className="text-center py-10">
                     <p>You haven't liked any posts yet.</p>

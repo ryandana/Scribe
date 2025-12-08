@@ -6,6 +6,11 @@ const postSchema = new mongoose.Schema(
             type: String,
             required: true,
         },
+        shortDescription: {
+            type: String,
+            maxlength: 200,
+            required: true,
+        },
         body: {
             type: String,
             required: true,
@@ -14,7 +19,7 @@ const postSchema = new mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
             required: true,
-        },
+    },
         thumbnail_url: {
             type: String,
             required: true,

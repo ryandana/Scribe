@@ -5,10 +5,6 @@ import Avatar from "@/components/ui/avatar.component";
 import { getImageUrl } from "@/lib/imageUrl";
 import { IconEye } from "@tabler/icons-react";
 import VoteControl from "./vote-control.component";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
-import rehypeSanitize from "rehype-sanitize";
-import previewText from "@/utils/previewText";
 
 export default function PostsLarge({ posts }) {
   return (
@@ -38,8 +34,8 @@ export default function PostsLarge({ posts }) {
                 <p className="text-sm hover:underline">{post.author?.nickname || 'Unknown'}</p>
               </div>
               <h2 className="font-semibold text-2xl group-hover:text-primary transition-all duration-100">{post.title}</h2>
-              <div className="prose prose-sm">
-                <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeSanitize]}>{previewText(post.body)}</ReactMarkdown>
+              <div className="prose prose-sm text-base-content/70">
+                {post.shortDescription}
               </div>
               <div className="flex items-center gap-2 text-sm">
                 <span>{timeAgo(post.createdAt)}</span>

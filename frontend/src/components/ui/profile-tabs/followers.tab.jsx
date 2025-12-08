@@ -7,6 +7,7 @@ import { getImageUrl } from "@/lib/imageUrl";
 import { IconUsers, IconUserPlus, IconCheck } from "@tabler/icons-react";
 import api from "@/lib/api";
 import { useAuth } from "@/context/auth.context";
+import UserListSkeleton from "@/components/skeletons/user-list.skeleton";
 
 function FollowUserItem({ user, currentUser, onFollowChange }) {
     const [isFollowing, setIsFollowing] = useState(false);
@@ -78,8 +79,8 @@ function FollowUserItem({ user, currentUser, onFollowChange }) {
                     onClick={handleToggleFollow}
                     disabled={isLoading || isCheckingStatus}
                     className={`btn btn-sm gap-1.5 shrink-0 ${isFollowing
-                            ? "btn-outline hover:btn-error"
-                            : "btn-primary"
+                        ? "btn-outline hover:btn-error"
+                        : "btn-primary"
                         }`}
                 >
                     {isLoading || isCheckingStatus ? (
@@ -126,20 +127,7 @@ export default function FollowersTab() {
     }, [currentUser]);
 
     if (loading) {
-        return (
-            <div className="space-y-4">
-                {[...Array(3)].map((_, i) => (
-                    <div key={i} className="flex items-center gap-4 p-4 rounded-lg border border-base-200 animate-pulse">
-                        <div className="w-14 h-14 rounded-full bg-base-200"></div>
-                        <div className="flex-1 space-y-2">
-                            <div className="h-5 bg-base-200 rounded w-32"></div>
-                            <div className="h-4 bg-base-200 rounded w-24"></div>
-                        </div>
-                        <div className="w-20 h-8 bg-base-200 rounded"></div>
-                    </div>
-                ))}
-            </div>
-        );
+        return <UserListSkeleton count={3} />;
     }
 
     if (error) {

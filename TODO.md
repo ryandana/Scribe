@@ -1,1 +1,0 @@
-- [x] 1. add my post (list all posts and can edit and delete) (in profile page with tabs named My Post), change password and delete account in profile page different tab(Security), and add liked post tab, use daisy ui component

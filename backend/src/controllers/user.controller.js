@@ -248,6 +248,7 @@ export const getPopularPosts = async (req, res) => {
             {
                 $project: {
                     title: 1,
+                    shortDescription: 1,
                     body: 1,
                     thumbnail_url: 1,
                     tags: 1,

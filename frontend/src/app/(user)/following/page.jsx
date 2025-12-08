@@ -35,9 +35,6 @@ export default function FollowedPage() {
                 {/* Header */}
                 <div className="flex w-full items-center justify-between">
                     <div className="flex items-center gap-3">
-                        <div className="p-2 bg-neutral/10 rounded-lg">
-                            <IconUsers size={24} className="text-neutral" />
-                        </div>
                         <div>
                             <h1 className="text-2xl font-bold">Following Feed</h1>
                             <p className="text-sm text-base-content/60">

@@ -47,7 +47,7 @@ export const getSinglePost = async (req, res) => {
 
 export const createPost = async (req, res) => {
     try {
-        const { title, body, userId, tags } = req.body;
+        const { title, shortDescription, body, userId, tags } = req.body;
 
         if (!req.file) {
             return res.status(400).json({ message: "Thumbnail is required" });
@@ -71,6 +71,7 @@ export const createPost = async (req, res) => {
 
         const newPost = await Post.create({
             title,
+            shortDescription: shortDescription || "",
             body,
             author: userId,
             thumbnail_url: file.url,
@@ -90,7 +91,7 @@ export const createPost = async (req, res) => {
 };
 export const updatePost = async (req, res) => {
     try {
-        const { title, body, tags } = req.body;
+        const { title, shortDescription, body, tags } = req.body;
 
         const post = await Post.findById(req.params.id);
         if (!post) return res.status(404).json({ message: "Post not found" });
@@ -128,6 +129,10 @@ export const updatePost = async (req, res) => {
         }
 
         post.title = title ?? post.title;
+        post.shortDescription =
+            shortDescription !== undefined
+                ? shortDescription
+                : post.shortDescription;
         post.body = body ?? post.body;
         post.tags = parsedTags ?? post.tags;
         post.thumbnail_url = imageUrl;

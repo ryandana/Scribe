@@ -57,8 +57,8 @@ function UserRecommendationItem({ user, onFollowChange }) {
                     onClick={handleToggleFollow}
                     disabled={isLoading}
                     className={`btn btn-sm gap-1.5 shrink-0 ${isFollowing
-                            ? "btn-outline hover:btn-error"
-                            : "btn-neutral"
+                        ? "btn-outline hover:btn-error"
+                        : "btn-neutral"
                         }`}
                 >
                     {isLoading ? (
@@ -111,25 +111,6 @@ export default function UserRecommendationCard({ limit = 5, showHeader = true })
         }
     };
 
-    if (!currentUser) {
-        return (
-            <div className="card bg-linear-to-br from-neutral/10 to-secondary/10 border border-base-200">
-                <div className="card-body">
-                    <div className="flex items-center gap-2 mb-3">
-                        <IconSparkles size={20} className="text-neutral" />
-                        <h3 className="font-bold">Join the Community</h3>
-                    </div>
-                    <p className="text-sm text-base-content/70 mb-4">
-                        Sign in to discover amazing creators and build your personalized feed.
-                    </p>
-                    <Link href="/login" className="btn btn-neutral btn-sm w-full">
-                        Sign In
-                    </Link>
-                </div>
-            </div>
-        );
-    }
-
     if (loading) {
         return (
             <div className="card bg-base-100 border border-base-200">
@@ -142,13 +123,13 @@ export default function UserRecommendationCard({ limit = 5, showHeader = true })
                     )}
                     <div className="space-y-3">
                         {[...Array(3)].map((_, i) => (
-                            <div key={i} className="flex items-center gap-3 animate-pulse">
-                                <div className="w-11 h-11 rounded-full bg-base-200"></div>
+                            <div key={i} className="flex items-center gap-3">
+                                <div className="skeleton w-11 h-11 rounded-full"></div>
                                 <div className="flex-1 space-y-2">
-                                    <div className="h-4 bg-base-200 rounded w-24"></div>
-                                    <div className="h-3 bg-base-200 rounded w-16"></div>
+                                    <div className="skeleton h-4 w-24"></div>
+                                    <div className="skeleton h-3 w-16"></div>
                                 </div>
-                                <div className="w-16 h-8 bg-base-200 rounded"></div>
+                                <div className="skeleton w-16 h-8 rounded"></div>
                             </div>
                         ))}
                     </div>

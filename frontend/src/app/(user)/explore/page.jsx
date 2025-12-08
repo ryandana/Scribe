@@ -7,6 +7,9 @@ import PostsList from "@/components/ui/posts-list.component";
 import UserCard from "@/components/ui/user-card.component";
 import api from "@/lib/api";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
+import PostsListSkeleton from "@/components/skeletons/posts-list.skeleton";
+import UserListSkeleton from "@/components/skeletons/user-list.skeleton";
+import ExplorePageSkeleton from "@/components/skeletons/explore-page.skeleton";
 
 function ExplorePageContent() {
     const router = useRouter();
@@ -162,10 +165,11 @@ function ExplorePageContent() {
                 )}
 
                 {/* Loading State */}
-                {isLoading && (
-                    <div className="flex justify-center items-center py-12">
-                        <span className="loading loading-spinner loading-lg text-primary"></span>
-                    </div>
+                {isLoading && activeTab === "posts" && (
+                    <PostsListSkeleton count={3} />
+                )}
+                {isLoading && activeTab === "users" && (
+                    <UserListSkeleton count={3} />
                 )}
 
                 {/* Results */}
@@ -233,13 +237,7 @@ function ExplorePageContent() {
 
 export default function ExplorePage() {
     return (
-        <Suspense fallback={
-            <Section className="py-24">
-                <div className="flex justify-center items-center py-12">
-                    <span className="loading loading-spinner loading-lg text-primary"></span>
-                </div>
-            </Section>
-        }>
+        <Suspense fallback={<ExplorePageSkeleton />}>
             <ExplorePageContent />
         </Suspense>
     );

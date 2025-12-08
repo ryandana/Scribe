@@ -6,6 +6,7 @@ import EmailInput from "@/components/ui/email-input.component";
 import UsernameInput from "@/components/ui/username-input.component";
 import { useAuth } from "@/context/auth.context";
 import api from "@/lib/api";
+import ProfileFormSkeleton from "@/components/skeletons/profile-form.skeleton";
 
 export default function Profile() {
   const { user, loading: authLoading, refreshUser } = useAuth();
@@ -48,11 +49,7 @@ export default function Profile() {
   };
 
   if (authLoading) {
-    return (
-      <div className="flex h-full w-full items-center justify-center">
-        <span className="loading loading-spinner loading-lg"></span>
-      </div>
-    );
+    return <ProfileFormSkeleton />;
   }
 
   if (!user) return null;
@@ -79,19 +76,19 @@ export default function Profile() {
         <div className="form-control w-full">
           <label className="label">
             <span className="label-text">Bio</span>
-            <span className="label-text-alt text-base-content/60">{bio.length}/500</span>
+            <span className="label-text-alt text-base-content/60">{bio.length}/50</span>
           </label>
           <textarea
             className="textarea textarea-bordered w-full h-32 resize-none"
             value={bio}
             onChange={(e) => {
-              if (e.target.value.length <= 500) {
+              if (e.target.value.length <= 50) {
                 setBio(e.target.value);
               }
             }}
             name="bio"
             placeholder="Tell us about yourself..."
-            maxLength={500}
+            maxLength={50}
           />
           <label className="label">
             <span className="label-text-alt text-base-content/60">

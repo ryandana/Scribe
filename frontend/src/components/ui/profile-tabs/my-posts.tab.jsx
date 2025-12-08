@@ -6,6 +6,7 @@ import { IconTrash, IconPencil, IconDots } from "@tabler/icons-react";
 import Link from "next/link";
 import { useConfirm } from "@/context/confirm.context";
 import { useToast } from "@/context/toast.context";
+import PostsListSkeleton from "@/components/skeletons/posts-list.skeleton";
 
 export default function MyPostsTab() {
     const [posts, setPosts] = useState([]);
@@ -48,17 +49,17 @@ export default function MyPostsTab() {
         }
     }
 
-    if (loading) return <div className="loading loading-spinner loading-md"></div>;
+    if (loading) return <PostsListSkeleton count={3} />;
 
     return (
         <div className="space-y-4">
             {posts.length === 0 ? (
                 <div className="text-center py-10">
                     <p>You haven't posted anything yet.</p>
-                    <Link href="/write" className="btn btn-primary mt-4">Write your first post</Link>
+                    <Link href="/write" className="btn btn-neutral mt-4">Write your first post</Link>
                 </div>
             ) : (
-                <div className="space-y-6">
+                <div className="space-y-8">
                     {posts.map(post => (
                         <div key={post._id} className="relative group">
                             <div className="absolute right-2 top-2 z-10">

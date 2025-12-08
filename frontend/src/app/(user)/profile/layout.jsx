@@ -9,6 +9,7 @@ import { IconPencil, IconArticle, IconHeart, IconUsers, IconUserPlus, IconShield
 import { useRef, useState } from "react";
 import api from "@/lib/api";
 import { getImageUrl } from "@/lib/imageUrl";
+import ProfileLayoutSkeleton from "@/components/skeletons/profile-layout.skeleton";
 
 export default function ProfileLayout({ children }) {
     const pathname = usePathname();
@@ -41,11 +42,7 @@ export default function ProfileLayout({ children }) {
     };
 
     if (loading) {
-        return (
-            <div className="flex h-screen w-full items-center justify-center">
-                <span className="loading loading-spinner loading-lg"></span>
-            </div>
-        );
+        return <ProfileLayoutSkeleton />;
     }
 
     if (!user) return null;

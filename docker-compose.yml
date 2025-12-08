@@ -8,6 +8,11 @@ services:
     volumes:
       - ./frontend:/app
       - /app/node_modules
+    environment:
+      - PORT=3000
+      - NEXT_PUBLIC_API_URL=http://backend:8000
+    networks:
+      - frontend
   backend:
     build: ./backend
     ports:
