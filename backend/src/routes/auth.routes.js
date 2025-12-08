@@ -5,8 +5,10 @@ import {
     logout,
     register,
     update,
+    updateAvatar,
 } from "../controllers/auth.controller.js";
 import authMiddleware from "../middlewares/auth.middleware.js";
+import upload from "../config/multer.js";
 
 const router = Router();
 
@@ -15,5 +17,7 @@ router.post("/login", login);
 router.post("/logout", authMiddleware, logout);
 router.get("/me", authMiddleware, check);
 router.put("/me", authMiddleware, update);
+
+router.put("/avatar", authMiddleware, upload.single("avatar"), updateAvatar);
 
 export default router;

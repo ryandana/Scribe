@@ -1,11 +1,24 @@
 import Section from "@/components/atoms/section.component";
 import PostsLarge from "@/components/ui/posts-large.component";
 import PostsList from "@/components/ui/posts-list.component";
-import { posts } from "@/constants/libMockPosts";
 import { IconArrowRight } from "@tabler/icons-react";
 import Link from "next/link";
 
-export default function Page() {
+import api from "@/lib/api";
+
+const getPosts = async () => {
+  try {
+    const data = await api.get("/api/posts");
+    return data;
+  } catch (error) {
+    console.error("Error fetching posts:", error);
+    return { posts: [] };
+  }
+};
+
+export default async function Page() {
+  const { posts } = await getPosts();
+
   return (
     <Section className="py-24">
       <div className="flex w-full md:flex-row flex-col space-x-10 md:space-y-0 space-y-8 relative">
@@ -18,7 +31,7 @@ export default function Page() {
               className="flex items-center text-sm font-semibold gap-1"
             >
               See All
-              <IconArrowRight size={16}/>
+              <IconArrowRight size={16} />
             </Link>
           </div>
           {/* Latest Posts */}

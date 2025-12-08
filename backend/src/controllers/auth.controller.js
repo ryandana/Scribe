@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import User from "../models/user.model.js";
+import { saveImage, deleteImage } from "../utils/fileHandler.js";
 
 export const register = async (req, res) => {
     try {
@@ -130,5 +131,39 @@ export const update = async (req, res) => {
         return res.status(500).json({
             message: " Internal Server error",
         });
+    }
+};
+
+export const updateAvatar = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const file = req.file;
+
+        if (!file) {
+            return res.status(400).json({ error: "No image uploaded" });
+        }
+
+        const user = await User.findById(userId);
+
+        // delete avatar lama
+        if (user.avatar_public_id) {
+            await deleteImage(user.avatar_public_id);
+        }
+
+        // upload avatar baru
+        const result = await saveImage(file.buffer);
+
+        user.avatar_url = result.url;
+        user.avatar_public_id = result.public_id;
+
+        await user.save();
+
+        res.json({
+            message: "Avatar updated successfully",
+            avatar_url: result.url,
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Failed to update avatar" });
     }
 };

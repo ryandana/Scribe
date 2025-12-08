@@ -1,6 +1,8 @@
 import timeAgo from "@/lib/timeAgo";
 import Image from "next/image";
 import Link from "next/link";
+import Avatar from "@/components/ui/avatar.component";
+import { getImageUrl } from "@/lib/imageUrl";
 
 export default function PostsLarge({ posts }) {
   return (
@@ -10,16 +12,17 @@ export default function PostsLarge({ posts }) {
           <Link key={post._id} href={`/post/${post._id}`} className="group">
             <div className="overflow-hidden rounded-lg">
               <Image
-                src={post.thumbnail_url}
+                src={getImageUrl(post.thumbnail_url)}
                 alt={post.title}
                 width={500}
                 height={500}
+                unoptimized
                 className="rounded-t-lg group-hover:scale-105 transition-all duration-100"
               />
             </div>
             <div className="py-4 flex flex-col gap-2">
               <div className="flex items-center gap-1.5">
-                <Image src={post.author.avatar_url} alt={post.author.nickname} width={25} height={25} className="rounded-full aspect-square" />
+                <Avatar src={getImageUrl(post.author.avatar_url)} alt={post.author.nickname} size={25} />
                 <p className="text-sm">{post.author.nickname}</p>
               </div>
               <h2 className="font-semibold text-2xl group-hover:text-primary transition-all duration-100">{post.title}</h2>

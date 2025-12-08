@@ -19,10 +19,13 @@ const postSchema = new mongoose.Schema(
             type: String,
             required: true,
         },
+        thumbnail_public_id: {
+            type: String,
+        },
         tags: [String],
         readingTime: Number,
     },
-    { timestamps: true },
+    { timestamps: true }
 );
 
 const Post = mongoose.model("Post", postSchema);

@@ -7,7 +7,7 @@ const axiosInstance = axios.create({
   baseURL: API_BASE,
   withCredentials: true, // Include cookies in requests
   headers: {
-    "Content-Type": "application/json",
+    // "Content-Type": "application/json", // Let axios set this automatically
   },
 });
 
@@ -16,12 +16,12 @@ axiosInstance.interceptors.response.use(
   (response) => response.data,
   (error) => {
     const customErr = new Error(
-      error?.response?.data?.message || error?.message || "Request failed",
+      error?.response?.data?.message || error?.message || "Request failed"
     );
     customErr.status = error?.response?.status;
     customErr.data = error?.response?.data;
     throw customErr;
-  },
+  }
 );
 
 export async function post(path, body) {

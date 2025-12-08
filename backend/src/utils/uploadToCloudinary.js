@@ -9,10 +9,13 @@ export const uploadToCloudinary = (buffer) => {
             },
             (error, result) => {
                 if (error) reject(error);
-                else resolve(result.secure_url);
+                else
+                    resolve({
+                        url: result.secure_url,
+                        public_id: result.public_id,
+                    });
             }
         );
-
         stream.end(buffer);
     });
 };

@@ -1,6 +1,8 @@
-import timeAgo from "@/lib/timeAgo";
-import Image from "next/image";
+import Avatar from "@/components/ui/avatar.component";
 import Link from "next/link";
+import Image from "next/image";
+import timeAgo from "@/lib/timeAgo";
+import { getImageUrl } from "@/lib/imageUrl";
 
 export default function PostsList({ posts }) {
   return (
@@ -14,12 +16,10 @@ export default function PostsList({ posts }) {
           >
             <div className="space-y-2">
               <div className="flex items-center gap-2">
-                <Image
-                  src={post.author.avatar_url}
+                <Avatar
+                  src={getImageUrl(post.author.avatar_url)}
                   alt={post.author.nickname}
-                  width={25}
-                  height={25}
-                  className="rounded-full aspect-square"
+                  size={25}
                 />
                 <span className="text-sm">{post.author.nickname}</span>
               </div>
@@ -46,10 +46,11 @@ export default function PostsList({ posts }) {
             <div className="flex items-center">
               <div className="w-28 h-28 shrink-0 overflow-hidden rounded-lg">
                 <Image
-                  src={post.thumbnail_url}
+                  src={getImageUrl(post.thumbnail_url)}
                   alt={post.title}
                   width={112}
                   height={112}
+                  unoptimized
                   className="w-full h-full object-cover rounded-lg group-hover:scale-110 transition-all duration-100"
                 />
               </div>

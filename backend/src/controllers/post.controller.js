@@ -1,9 +1,11 @@
 import Post from "../models/post.model.js";
-import { uploadToCloudinary } from "../utils/uploadToCloudinary.js";
+import { saveImage, deleteImage } from "../utils/fileHandler.js";
 
 export const getAllPosts = async (req, res) => {
     try {
-        const posts = await Post.find().sort({ createdAt: -1 });
+        const posts = await Post.find()
+            .populate("author", "nickname avatar_url")
+            .sort({ createdAt: -1 });
 
         res.status(200).json({ count: posts.length, posts });
     } catch (err) {
@@ -14,7 +16,10 @@ export const getAllPosts = async (req, res) => {
 
 export const getSinglePost = async (req, res) => {
     try {
-        const findPost = await Post.findById(req.params.id);
+        const findPost = await Post.findById(req.params.id).populate(
+            "author",
+            "nickname avatar_url"
+        );
         if (!findPost) {
             return res.status(404).json({ message: "Post not found" });
         }
@@ -33,30 +38,41 @@ export const createPost = async (req, res) => {
             return res.status(400).json({ message: "Thumbnail is required" });
         }
 
-        const imageUrl = await uploadToCloudinary(req.file.buffer);
+        const file = await saveImage(req.file.buffer);
 
-        const words = body.trim().split(/\s+/).length;
+        const plainText = body.replace(/<[^>]+>/g, " ");
+        const words = plainText.trim().split(/\s+/).length;
         const readingTime = Math.ceil(words / 200);
+
+        let parsedTags = tags;
+        if (typeof tags === "string") {
+            try {
+                parsedTags = JSON.parse(tags);
+            } catch (error) {
+                // If parsing fails, assume it's a single tag or comma-separated
+                parsedTags = tags.split(",").map((t) => t.trim());
+            }
+        }
 
         const newPost = await Post.create({
             title,
             body,
             author: userId,
-            thumbnail_url: imageUrl,
-            tags,
+            thumbnail_url: file.url,
+            thumbnail_public_id: file.public_id,
+            tags: parsedTags,
             readingTime,
         });
 
-        res.status(201).json({
+        return res.status(201).json({
             message: "Successfully created post",
             post: newPost,
         });
     } catch (err) {
         console.error(err);
-        res.status(500).json({ message: "Internal server error" });
+        return res.status(500).json({ message: "Internal server error" });
     }
 };
-
 export const updatePost = async (req, res) => {
     try {
         const { title, body, tags } = req.body;
@@ -65,39 +81,64 @@ export const updatePost = async (req, res) => {
         if (!post) return res.status(404).json({ message: "Post not found" });
 
         let imageUrl = post.thumbnail_url;
+        let imagePublicId = post.thumbnail_public_id;
 
-        if (req.file) {
-            imageUrl = await uploadToCloudinary(req.file.buffer);
-        }
+        // jika ada upload baru → upload, delete yang lama
+        // delete thumbnail lama
+        await deleteImage(post.thumbnail_public_id);
 
+        const file = await saveImage(req.file.buffer);
+        imageUrl = file.url;
+        imagePublicId = file.public_id;
+
+        // update reading time jika body berubah
         let readingTime = post.readingTime;
         if (body) {
-            const words = body.trim().split(/\s+/).length;
+            const plainText = body.replace(/<[^>]+>/g, " ");
+            const words = plainText.trim().split(/\s+/).length;
             readingTime = Math.ceil(words / 200);
+        }
+
+        let parsedTags = tags;
+        if (tags && typeof tags === "string") {
+            try {
+                parsedTags = JSON.parse(tags);
+            } catch (error) {
+                parsedTags = tags.split(",").map((t) => t.trim());
+            }
         }
 
         post.title = title ?? post.title;
         post.body = body ?? post.body;
-        post.tags = tags ?? post.tags;
+        post.tags = parsedTags ?? post.tags;
         post.thumbnail_url = imageUrl;
+        post.thumbnail_public_id = imagePublicId;
         post.readingTime = readingTime;
 
         const updated = await post.save();
 
-        res.status(200).json({
+        return res.status(200).json({
             message: "Successfully updated post",
             post: updated,
         });
     } catch (err) {
         console.error(err);
-        res.status(500).json({ message: "Internal server error" });
+        return res.status(500).json({ message: "Internal server error" });
     }
 };
 
 export const deletePost = async (req, res) => {
-    const deletedPost = await Post.findByIdAndDelete(req.params.id);
-    if (!deletedPost) {
-        return res.status(404).json({ message: "Post not found" });
+    try {
+        const deleted = await Post.findByIdAndDelete(req.params.id);
+
+        if (!deleted)
+            return res.status(404).json({ message: "Post not found" });
+
+        await deleteImage(deleted.thumbnail_public_id);
+
+        return res.status(200).json({ message: "Post successfully deleted" });
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ message: "Internal server error" });
     }
-    return res.status(201).json({ message: "Post successfully deleted" });
 };

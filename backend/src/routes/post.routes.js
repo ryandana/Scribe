@@ -7,6 +7,7 @@ import {
     updatePost,
 } from "../controllers/post.controller.js";
 import authMiddleware from "../middlewares/auth.middleware.js";
+import upload from "../config/multer.js";
 
 const router = Router();
 

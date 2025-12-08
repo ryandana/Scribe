@@ -10,7 +10,7 @@ export default function StreamChat() {
   const send = async () => {
     setOutput("");
 
-    const res = await fetch("http://localhost:8000/api/ai/stream", {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/api/ai/stream`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -65,7 +65,7 @@ export default function StreamChat() {
 
       {/* Render Markdown */}
       <div className="prose dark:prose-invert max-w-none mt-4">
-        
+
         <ReactMarkdown>{output}</ReactMarkdown>
       </div>
     </div>
