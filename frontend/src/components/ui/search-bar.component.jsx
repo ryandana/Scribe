@@ -34,16 +34,16 @@ export default function SearchBar() {
 
     return (
         <div className="relative w-full">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center text-base-content/50">
-                <IconSearch size={20} />
-            </div>
+            <IconSearch className="absolute left-3 top-1/2 -translate-y-1/2 z-10" size={20} />
+
             <input
                 type="text"
-                className="input input-bordered w-full pl-10 bg-base-100"
+                className="input input-bordered w-full pl-12 bg-base-100"
                 placeholder="Search for posts..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
             />
         </div>
+
     );
 }

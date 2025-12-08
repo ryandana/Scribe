@@ -9,6 +9,8 @@ import CommentSection from "@/components/ui/comment-section.component";
 import VoteControl from "@/components/ui/vote-control.component";
 import remarkGfm from "remark-gfm";
 import rehypeSanitize from "rehype-sanitize";
+import rehypeHighlight from "rehype-highlight";
+import "highlight.js/styles/atom-one-dark.css";
 
 async function getPost(id) {
     try {
@@ -116,7 +118,7 @@ export default async function Page({ params }) {
                 <article className="prose prose-lg prose-blue max-w-none">
                     <ReactMarkdown
                         remarkPlugins={[remarkGfm]}
-                        rehypePlugins={[rehypeSanitize]}
+                        rehypePlugins={[rehypeSanitize, rehypeHighlight]}
                     >
                         {post.body}
                     </ReactMarkdown>

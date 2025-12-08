@@ -7,13 +7,14 @@ import { useAuth } from "@/context/auth.context";
 import { IconPhoto, IconSend, IconX } from "@tabler/icons-react";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState, useRef, useEffect, Suspense } from "react";
+import { useState, useRef, useEffect, Suspense, useCallback } from "react";
 import ReactMarkdown from "react-markdown";
 import { getImageUrl } from "@/lib/imageUrl";
 import Link from "next/link";
 import remarkGfm from "remark-gfm";
 import rehypeSanitize from "rehype-sanitize";
 import { useToast } from "@/context/toast.context";
+import AISidebar from "@/components/ui/ai-sidebar.component";
 
 function WritePageContent() {
     const { user, loading: authLoading } = useAuth();
@@ -21,6 +22,7 @@ function WritePageContent() {
     const searchParams = useSearchParams();
     const editId = searchParams.get("edit");
     const fileInputRef = useRef(null);
+    const descriptionRef = useRef(null);
     const { addToast } = useToast();
 
     const [title, setTitle] = useState("");
@@ -31,6 +33,35 @@ function WritePageContent() {
     const [loading, setLoading] = useState(false);
     const [fetching, setFetching] = useState(!!editId);
     const [error, setError] = useState("");
+    const [selectedText, setSelectedText] = useState("");
+
+    // Handle text selection in the description textarea
+    const handleTextSelection = useCallback(() => {
+        const textarea = descriptionRef.current;
+        if (textarea) {
+            const selected = textarea.value.substring(
+                textarea.selectionStart,
+                textarea.selectionEnd
+            );
+            setSelectedText(selected);
+        }
+    }, []);
+
+    // Insert AI-generated text into the description
+    const handleInsertAIText = useCallback((text) => {
+        const textarea = descriptionRef.current;
+        if (textarea) {
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            const newText = description.substring(0, start) + text + description.substring(end);
+            setDescription(newText);
+            addToast("Text inserted successfully!", "success");
+        } else {
+            // If no selection, append to end
+            setDescription((prev) => prev + "\n\n" + text);
+            addToast("Text appended to content!", "success");
+        }
+    }, [description, addToast]);
 
     useEffect(() => {
         if (editId) {
@@ -236,10 +267,13 @@ function WritePageContent() {
                         {/* Editor */}
                         <div className="h-full">
                             <textarea
+                                ref={descriptionRef}
                                 placeholder="Tell your story..."
                                 className="w-full h-full text-lg leading-relaxed placeholder-gray-300 border-none focus:ring-0 resize-none bg-transparent outline-none p-0 min-h-[500px]"
                                 value={description}
                                 onChange={(e) => setDescription(e.target.value)}
+                                onSelect={handleTextSelection}
+                                onMouseUp={handleTextSelection}
                             />
                         </div>
 
@@ -267,6 +301,13 @@ function WritePageContent() {
                     </div>
                 </form>
             </div>
+
+            {/* AI Writing Assistant Sidebar */}
+            <AISidebar
+                selectedText={selectedText}
+                documentContent={description}
+                onInsertText={handleInsertAIText}
+            />
         </Section>
     );
 }

@@ -47,6 +47,10 @@
   font-family: var(--font-inter);
 }
 
+pre code.hljs {
+  background-color: transparent !important;
+}
+
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
