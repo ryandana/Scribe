@@ -97,13 +97,17 @@ export const updatePost = async (req, res) => {
         let imageUrl = post.thumbnail_url;
         let imagePublicId = post.thumbnail_public_id;
 
-        // jika ada upload baru → upload, delete yang lama
-        // delete thumbnail lama
-        await deleteImage(post.thumbnail_public_id);
+        // Only process new thumbnail if a file was uploaded
+        if (req.file) {
+            // delete old thumbnail
+            if (post.thumbnail_public_id) {
+                await deleteImage(post.thumbnail_public_id);
+            }
 
-        const file = await saveImage(req.file.buffer);
-        imageUrl = file.url;
-        imagePublicId = file.public_id;
+            const file = await saveImage(req.file.buffer);
+            imageUrl = file.url;
+            imagePublicId = file.public_id;
+        }
 
         // update reading time jika body berubah
         let readingTime = post.readingTime;

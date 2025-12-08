@@ -14,8 +14,16 @@ import {
     IconCopy,
     IconCheck,
     IconPlayerStop,
+    IconDownload,
+    IconSettings,
 } from "@tabler/icons-react";
 import ReactMarkdown from "react-markdown";
+
+const AVAILABLE_MODELS = [
+    { id: "gemma3:270m", name: "Gemma 3 270M", description: "Super Small, most lightweight" },
+    { id: "gemma3:1b", name: "Gemma 3 1B", description: "Small, fast" },
+    { id: "llama3.2:3b", name: "Llama 3.2 3B", description: "Balanced performance" },
+];
 
 const AI_ACTIONS = [
     {
@@ -54,6 +62,11 @@ export default function AISidebar({ selectedText = "", documentContent = "", onI
     const [inputText, setInputText] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [copiedId, setCopiedId] = useState(null);
+    const [selectedModel, setSelectedModel] = useState(AVAILABLE_MODELS[2].id); // Default to llama3.2:3b
+    const [localModels, setLocalModels] = useState([]);
+    const [isPulling, setIsPulling] = useState(false);
+    const [pullProgress, setPullProgress] = useState("");
+    const [showSettings, setShowSettings] = useState(false);
     const messagesEndRef = useRef(null);
     const inputRef = useRef(null);
     const abortControllerRef = useRef(null);
@@ -61,6 +74,23 @@ export default function AISidebar({ selectedText = "", documentContent = "", onI
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     };
+
+    // Fetch available local models on mount
+    const fetchLocalModels = async () => {
+        try {
+            const res = await fetch(
+                `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/api/ai/models`
+            );
+            const data = await res.json();
+            setLocalModels(data.models?.map(m => m.name) || []);
+        } catch (error) {
+            console.error("Failed to fetch models:", error);
+        }
+    };
+
+    useEffect(() => {
+        fetchLocalModels();
+    }, []);
 
     useEffect(() => {
         scrollToBottom();
@@ -72,6 +102,64 @@ export default function AISidebar({ selectedText = "", documentContent = "", onI
             inputRef.current?.focus();
         }
     }, [selectedText, isOpen]);
+
+    // Check if model is available locally
+    const isModelAvailable = (modelId) => {
+        return localModels.some(m => m.startsWith(modelId.split(':')[0]));
+    };
+
+    // Pull model if not available
+    const pullModel = async (modelId) => {
+        setIsPulling(true);
+        setPullProgress("Starting download...");
+
+        try {
+            const res = await fetch(
+                `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/api/ai/pull`,
+                {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ model: modelId }),
+                }
+            );
+
+            const reader = res.body.getReader();
+            const decoder = new TextDecoder();
+
+            while (true) {
+                const { value, done } = await reader.read();
+                if (done) break;
+
+                const chunk = decoder.decode(value);
+                const lines = chunk.split("\n");
+
+                for (const line of lines) {
+                    if (!line.startsWith("data: ")) continue;
+                    const payload = line.replace("data: ", "");
+                    if (payload === "[DONE]") {
+                        setPullProgress("Download complete!");
+                        await fetchLocalModels();
+                        break;
+                    }
+                    try {
+                        const json = JSON.parse(payload);
+                        if (json.status) {
+                            const progress = json.completed && json.total
+                                ? ` (${Math.round((json.completed / json.total) * 100)}%)`
+                                : "";
+                            setPullProgress(`${json.status}${progress}`);
+                        }
+                    } catch { /* ignore */ }
+                }
+            }
+        } catch (error) {
+            console.error("Failed to pull model:", error);
+            setPullProgress("Download failed: " + error.message);
+        } finally {
+            setIsPulling(false);
+            setTimeout(() => setPullProgress(""), 3000);
+        }
+    };
 
     const sendMessage = async (customPrompt = null, actionLabel = null, displayText = null) => {
         const textToSend = customPrompt || inputText.trim();
@@ -109,7 +197,7 @@ export default function AISidebar({ selectedText = "", documentContent = "", onI
                         "Content-Type": "application/json",
                     },
                     body: JSON.stringify({
-                        model: process.env.NEXT_PUBLIC_MODEL || "llama3.2:3b",
+                        model: selectedModel,
                         messages: [
                             {
                                 role: "system",
@@ -252,15 +340,19 @@ export default function AISidebar({ selectedText = "", documentContent = "", onI
                 {/* Header */}
                 <div className="flex items-center justify-between p-4 border-b border-base-300 bg-linear-to-r from-primary/10 to-secondary/10">
                     <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-lg bg-linear-to-br from-primary to-secondary flex items-center justify-center">
-                            <IconSparkles size={18} className="text-white" />
-                        </div>
                         <div>
-                            <h2 className="font-bold text-sm">AI Writing Assistant</h2>
+                            <h2 className="font-bold text-sm">GemoyAI</h2>
                             <p className="text-xs text-base-content/60">Powered by Ollama</p>
                         </div>
                     </div>
                     <div className="flex items-center gap-1">
+                        <button
+                            onClick={() => setShowSettings(!showSettings)}
+                            className={`btn btn-ghost btn-sm btn-square ${showSettings ? 'btn-active' : ''}`}
+                            aria-label="Settings"
+                        >
+                            <IconSettings size={16} />
+                        </button>
                         <button
                             onClick={clearChat}
                             className="btn btn-ghost btn-sm btn-square"
@@ -277,6 +369,62 @@ export default function AISidebar({ selectedText = "", documentContent = "", onI
                         </button>
                     </div>
                 </div>
+
+                {/* Model Selector */}
+                {showSettings && (
+                    <div className="p-3 border-b border-base-300 bg-base-200/30">
+                        <p className="text-xs text-base-content/60 mb-2">Select Model</p>
+                        <div className="space-y-2">
+                            {AVAILABLE_MODELS.map((model) => {
+                                const available = isModelAvailable(model.id);
+                                return (
+                                    <div
+                                        key={model.id}
+                                        className={`flex items-center justify-between p-2 rounded-lg cursor-pointer transition-colors ${selectedModel === model.id
+                                            ? 'bg-primary/20 border border-primary/40'
+                                            : 'bg-base-100 hover:bg-base-200 border border-transparent'
+                                            }`}
+                                        onClick={() => !isPulling && setSelectedModel(model.id)}
+                                    >
+                                        <div className="flex-1">
+                                            <div className="flex items-center gap-2">
+                                                <span className="text-sm font-medium">{model.name}</span>
+                                                {available ? (
+                                                    <span className="badge badge-success badge-xs">Ready</span>
+                                                ) : (
+                                                    <span className="badge badge-warning badge-xs">Not installed</span>
+                                                )}
+                                            </div>
+                                            <p className="text-xs text-base-content/50">{model.description}</p>
+                                        </div>
+                                        {!available && (
+                                            <button
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    pullModel(model.id);
+                                                }}
+                                                disabled={isPulling}
+                                                className="btn btn-xs btn-ghost"
+                                                title="Download model"
+                                            >
+                                                {isPulling ? (
+                                                    <IconLoader2 size={14} className="animate-spin" />
+                                                ) : (
+                                                    <IconDownload size={14} />
+                                                )}
+                                            </button>
+                                        )}
+                                    </div>
+                                );
+                            })}
+                        </div>
+                        {pullProgress && (
+                            <div className="mt-2 p-2 bg-info/10 rounded-lg">
+                                <p className="text-xs text-info">{pullProgress}</p>
+                            </div>
+                        )}
+                    </div>
+                )}
 
                 {/* Quick Actions */}
                 <div className="p-3 border-b border-base-300 bg-base-200/50">
@@ -315,15 +463,15 @@ export default function AISidebar({ selectedText = "", documentContent = "", onI
                                 <div
                                     className={`chat-bubble ${msg.role === "user"
                                         ? "chat-bubble-primary"
-                                        : "chat-bubble-neutral"
-                                        } max-w-[85%]`}
+                                        : "bg-base-200 text-base-content"
+                                        } max-w-[85%] overflow-hidden`}
                                 >
                                     {msg.role === "assistant" ? (
-                                        <div className="max-w-none text-sm">
+                                        <div className="max-w-none text-sm wrap-break-word overflow-x-auto prose prose-sm *:wrap-break-word [&_pre]:overflow-x-auto [&_code]:break-all [&_p]:my-1 [&_ul]:my-1 [&_ol]:my-1">
                                             <ReactMarkdown>{msg.content || "..."}</ReactMarkdown>
                                         </div>
                                     ) : (
-                                        <div className="max-w-none text-sm">
+                                        <div className="max-w-none text-sm whitespace-pre-wrap wrap-break-word">
                                             <ReactMarkdown>{msg.content || "..."}</ReactMarkdown>
                                         </div>
                                     )}
@@ -374,7 +522,7 @@ export default function AISidebar({ selectedText = "", documentContent = "", onI
                             </p>
                         </div>
                     )}
-                    <div className="flex gap-2">
+                    <div className="flex gap-2 items-center justify-center">
                         <textarea
                             ref={inputRef}
                             value={inputText}

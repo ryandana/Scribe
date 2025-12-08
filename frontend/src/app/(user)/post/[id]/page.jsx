@@ -62,6 +62,18 @@ export default async function Page({ params }) {
                     <h1 className="text-4xl md:text-5xl font-bold leading-tight">
                         {post.title}
                     </h1>
+                    {post.tags && post.tags.length > 0 && (
+                        <div className="flex gap-2">
+                            {post.tags.map((tag, idx) => (
+                                <span
+                                    key={idx}
+                                    className="bg-gray-100 text-gray-600 px-3 py-1 rounded-full text-sm font-medium"
+                                >
+                                    #{tag}
+                                </span>
+                            ))}
+                        </div>
+                    )}
                     <div className="divider"></div>
                     <div className="flex w-full justify-between">
                         <div className="flex items-center gap-6 md:text-base text-sm">
@@ -86,18 +98,7 @@ export default async function Page({ params }) {
                     </div>
                     <div className="divider"></div>
 
-                    {post.tags && post.tags.length > 0 && (
-                        <div className="flex gap-2">
-                            {post.tags.map((tag, idx) => (
-                                <span
-                                    key={idx}
-                                    className="bg-gray-100 text-gray-600 px-3 py-1 rounded-full text-sm font-medium"
-                                >
-                                    #{tag}
-                                </span>
-                            ))}
-                        </div>
-                    )}
+
                 </div>
 
                 {/* Thumbnail */}

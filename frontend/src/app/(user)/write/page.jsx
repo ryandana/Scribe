@@ -15,6 +15,8 @@ import remarkGfm from "remark-gfm";
 import rehypeSanitize from "rehype-sanitize";
 import { useToast } from "@/context/toast.context";
 import AISidebar from "@/components/ui/ai-sidebar.component";
+import rehypeHighlight from "rehype-highlight";
+import "highlight.js/styles/atom-one-dark.css";
 
 function WritePageContent() {
     const { user, loading: authLoading } = useAuth();
@@ -281,7 +283,7 @@ function WritePageContent() {
                         <div className="h-full border-l pl-8 hidden md:block">
                             <div className="prose prose-lg max-w-none">
                                 {description ? (
-                                    <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeSanitize]}>
+                                    <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeSanitize, rehypeHighlight]}>
                                         {description}
                                     </ReactMarkdown>
                                 ) : (
