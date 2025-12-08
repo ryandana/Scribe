@@ -8,6 +8,7 @@ import authRoutes from "./routes/auth.routes.js";
 import postsRoutes from "./routes/post.routes.js";
 import aiRoutes from "./routes/ai.routes.js";
 import commentRoutes from "./routes/comment.routes.js";
+import userRoutes from "./routes/user.routes.js";
 
 dotenv.config();
 
@@ -36,6 +37,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/posts", postsRoutes);
 app.use("/api/ai", aiRoutes);
 app.use("/api/comments", commentRoutes);
+app.use("/api/users", userRoutes);
 
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {

@@ -14,8 +14,9 @@ import { useAuth } from "@/context/auth.context";
 import { motion, AnimatePresence } from "framer-motion";
 import Avatar from "@/components/ui/avatar.component";
 import { getImageUrl } from "@/lib/imageUrl";
+import { navLinks } from "@/constants/navLinks";
 
-export default function Header({ navLinks }) {
+export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
@@ -64,8 +65,17 @@ export default function Header({ navLinks }) {
           </div>
 
           {/* Desktop Menu */}
-          {/* Desktop Menu - Removed navLinks as per TODO */}
           <div className="navbar-center md:flex hidden">
+            {navLinks.map((link) => (
+              <Link
+                key={link.name}
+                href={link.href}
+                onClick={() => setIsOpen(false)}
+                className="btn btn-ghost btn-sm"
+              >
+                {link.name}
+              </Link>
+            ))}
           </div>
 
           {/* Mobile Menu Button */}
@@ -159,7 +169,16 @@ export default function Header({ navLinks }) {
           >
             <div className="flex-1 flex flex-col justify-center items-center space-y-4 px-6">
               {/* Navigation Links */}
-              {/* Navigation Links Removed */}
+              {navLinks.map((link) => (
+                <Link
+                  key={link.title}
+                  href={link.href}
+                  onClick={() => setIsOpen(false)}
+                  className="btn btn-ghost btn-lg w-full"
+                >
+                  {link.title}
+                </Link>
+              ))}
 
               {/* Auth Section */}
               <div className="divider"></div>

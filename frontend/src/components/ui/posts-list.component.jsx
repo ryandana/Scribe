@@ -14,20 +14,28 @@ export default function PostsList({ posts }) {
   return (
     <>
       {posts.map((post) => {
+        const postUrl = post.author?.username
+          ? `/${post.author.username}/${post._id}`
+          : `/post/${post._id}`;
+
         return (
           <Link
-            href={`/post/${post._id}`}
+            href={postUrl}
             key={post._id}
             className="flex group justify-between rounded-lg md:gap-0 gap-x-6"
           >
             <div className="space-y-2">
               <div className="flex items-center gap-2">
-                <Avatar
-                  src={getImageUrl(post.author.avatar_url)}
-                  alt={post.author.nickname}
-                  size={25}
-                />
-                <span className="text-sm">{post.author.nickname}</span>
+                <div
+                  className="flex items-center gap-2 hover:text-primary transition-colors"
+                >
+                  <Avatar
+                    src={getImageUrl(post.author?.avatar_url)}
+                    alt={post.author?.nickname || 'Author'}
+                    size={25}
+                  />
+                  <span className="text-sm hover:underline">{post.author?.nickname || 'Unknown'}</span>
+                </div>
               </div>
               <h2 className="md:text-2xl text-xl font-semibold group-hover:text-primary transition-all duration-100">
                 {post.title}
@@ -70,7 +78,7 @@ export default function PostsList({ posts }) {
                 />
               </div>
             </div>
-          </Link>
+          </Link >
         );
       })}
     </>

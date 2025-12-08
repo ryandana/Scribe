@@ -14,8 +14,12 @@ export default function PostsLarge({ posts }) {
   return (
     <>
       {posts.slice(0, 2).map((post) => {
+        const postUrl = post.author?.username
+          ? `/${post.author.username}/${post._id}`
+          : `/post/${post._id}`;
+
         return (
-          <Link key={post._id} href={`/post/${post._id}`} className="group">
+          <Link key={post._id} href={postUrl} className="group">
             <div className="overflow-hidden rounded-lg">
               <Image
                 src={getImageUrl(post.thumbnail_url)}
@@ -27,9 +31,11 @@ export default function PostsLarge({ posts }) {
               />
             </div>
             <div className="py-4 flex flex-col gap-2">
-              <div className="flex items-center gap-1.5">
-                <Avatar src={getImageUrl(post.author.avatar_url)} alt={post.author.nickname} size={25} />
-                <p className="text-sm">{post.author.nickname}</p>
+              <div
+                className="flex items-center gap-1.5 hover:text-primary transition-colors w-fit"
+              >
+                <Avatar src={getImageUrl(post.author?.avatar_url)} alt={post.author?.nickname || 'Author'} size={25} />
+                <p className="text-sm hover:underline">{post.author?.nickname || 'Unknown'}</p>
               </div>
               <h2 className="font-semibold text-2xl group-hover:text-primary transition-all duration-100">{post.title}</h2>
               <div className="prose prose-sm">

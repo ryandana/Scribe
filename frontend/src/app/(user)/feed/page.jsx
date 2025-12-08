@@ -1,16 +1,15 @@
 import Section from "@/components/atoms/section.component";
 import PostsLarge from "@/components/ui/posts-large.component";
 import PostsList from "@/components/ui/posts-list.component";
-import SearchBar from "@/components/ui/search-bar.component";
+import UserRecommendationCard from "@/components/ui/user-recommendation-card.component";
 import { IconArrowRight } from "@tabler/icons-react";
 import Link from "next/link";
 
 import api from "@/lib/api";
 
-const getPosts = async (search = "") => {
+const getPosts = async () => {
   try {
-    const query = search ? `?search=${encodeURIComponent(search)}` : "";
-    const data = await api.get(`/api/posts${query}`);
+    const data = await api.get(`/api/posts`);
     return data;
   } catch (error) {
     console.error("Error fetching posts:", error);
@@ -18,17 +17,13 @@ const getPosts = async (search = "") => {
   }
 };
 
-export default async function Page({ searchParams }) {
-  const { search } = (await searchParams) || {};
-  const { posts } = await getPosts(search);
+export default async function Page() {
+  const { posts } = await getPosts();
 
   return (
     <Section className="py-24">
       <div className="flex w-full md:flex-row flex-col space-x-10 md:space-y-0 space-y-8 relative">
         <div className="flex flex-col md:space-y-6 space-y-8 md:w-2/3 w-full">
-          {/* Search Bar */}
-          <SearchBar />
-
           {/* Latest Posts Header */}
           <div className="flex w-full items-center justify-between">
             <h2 className="mb-3 text-xl font-semibold">Latest Posts</h2>
@@ -43,7 +38,10 @@ export default async function Page({ searchParams }) {
           {/* Latest Posts */}
           <PostsList posts={posts} />
         </div>
-        <div className="md:sticky md:w-1/3 w-full flex flex-col space-y-3">
+        <div className="md:sticky md:top-24 md:w-1/3 w-full flex flex-col space-y-6 h-fit">
+          {/* User Recommendations */}
+          <UserRecommendationCard limit={5} />
+
           {/* Popular Posts Header */}
           <div className="flex w-full">
             <h2 className="mb-3 text-xl font-semibold">Popular Posts</h2>

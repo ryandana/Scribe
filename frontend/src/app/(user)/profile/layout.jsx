@@ -4,12 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/context/auth.context";
 import Avatar from "@/components/ui/avatar.component";
-import { IconPencil } from "@tabler/icons-react"; // Kept for consistency if you want the avatar edit to be here, but usually avatar edit is in the profile form. 
-// Wait, the avatar edit logic was in the sidebar in the previous file.
-// I should move the avatar edit logic to this layout or keep it in the "My Profile" page?
-// The user had the avatar in the sidebar. Let's keep it in the sidebar (Layout).
-// But `handleAvatarChange` needs state. Layouts can preserve state in Next.js? Yes, it's a client component wrapping children.
-// So I will replicate the Sidebar logic including Avatar Upload here.
+import { IconPencil, IconArticle, IconHeart, IconUsers, IconUserPlus, IconShield, IconUser } from "@tabler/icons-react";
 
 import { useRef, useState } from "react";
 import api from "@/lib/api";
@@ -59,6 +54,15 @@ export default function ProfileLayout({ children }) {
 
     const isActive = (path) => pathname === path;
 
+    const navItems = [
+        { href: "/profile", label: "My Posts", icon: IconArticle },
+        { href: "/profile/my-profile", label: "My Profile", icon: IconUser },
+        { href: "/profile/liked-posts", label: "Liked Posts", icon: IconHeart },
+        { href: "/profile/followers", label: "Followers", icon: IconUsers, badge: user.followers?.length || 0 },
+        { href: "/profile/following", label: "Following", icon: IconUserPlus, badge: user.following?.length || 0 },
+        { href: "/profile/security", label: "Security", icon: IconShield },
+    ];
+
     return (
         <div className="py-24 mx-auto max-w-5xl px-4">
             {error && (
@@ -103,30 +107,40 @@ export default function ProfileLayout({ children }) {
                         </div>
                         <h2 className="font-bold text-lg">{user.nickname}</h2>
                         <p className="text-sm text-base-content/60">@{user.username}</p>
+                        {user.bio && (
+                            <p className="text-sm text-base-content/70 mt-2 line-clamp-3">{user.bio}</p>
+                        )}
+                        <div className="flex gap-4 mt-3 text-sm">
+                            <div className="text-center">
+                                <span className="font-bold">{user.followers?.length || 0}</span>
+                                <span className="text-base-content/60 ml-1">followers</span>
+                            </div>
+                            <div className="text-center">
+                                <span className="font-bold">{user.following?.length || 0}</span>
+                                <span className="text-base-content/60 ml-1">following</span>
+                            </div>
+                        </div>
                     </div>
 
                     {/* Navigation */}
                     <ul className="menu bg-base-100 w-full rounded-box border border-base-200">
-                        <li>
-                            <Link href="/profile" className={isActive("/profile") ? "active" : ""}>
-                                My Profile
-                            </Link>
-                        </li>
-                        <li>
-                            <Link href="/profile/my-posts" className={isActive("/profile/my-posts") ? "active" : ""}>
-                                My Posts
-                            </Link>
-                        </li>
-                        <li>
-                            <Link href="/profile/liked-posts" className={isActive("/profile/liked-posts") ? "active" : ""}>
-                                Liked Posts
-                            </Link>
-                        </li>
-                        <li>
-                            <Link href="/profile/security" className={isActive("/profile/security") ? "active" : ""}>
-                                Security
-                            </Link>
-                        </li>
+                        {navItems.map((item) => {
+                            const Icon = item.icon;
+                            return (
+                                <li key={item.href}>
+                                    <Link
+                                        href={item.href}
+                                        className={`flex items-center gap-3 ${isActive(item.href) ? "active" : ""}`}
+                                    >
+                                        <Icon size={18} />
+                                        <span className="flex-1">{item.label}</span>
+                                        {item.badge !== undefined && item.badge > 0 && (
+                                            <span className="badge badge-sm badge-primary">{item.badge}</span>
+                                        )}
+                                    </Link>
+                                </li>
+                            );
+                        })}
                     </ul>
                 </div>
 

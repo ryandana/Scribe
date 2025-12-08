@@ -8,6 +8,7 @@ import {
     toggleVote,
     getMyPosts,
     getLikedPosts,
+    getFollowedPosts,
 } from "../controllers/post.controller.js";
 import authMiddleware from "../middlewares/auth.middleware.js";
 import upload from "../config/multer.js";
@@ -16,6 +17,7 @@ const router = Router();
 
 router.get("/me", authMiddleware, getMyPosts);
 router.get("/liked", authMiddleware, getLikedPosts);
+router.get("/followed", authMiddleware, getFollowedPosts);
 
 router.get("/", getAllPosts);
 router.get("/:id", getSinglePost);

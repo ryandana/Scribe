@@ -36,6 +36,7 @@ function WritePageContent() {
     const [fetching, setFetching] = useState(!!editId);
     const [error, setError] = useState("");
     const [selectedText, setSelectedText] = useState("");
+    const [postAuthorUsername, setPostAuthorUsername] = useState(null);
 
     // Handle text selection in the description textarea
     const handleTextSelection = useCallback(() => {
@@ -77,6 +78,7 @@ function WritePageContent() {
                     if (post.thumbnail_url) {
                         setThumbnailPreview(getImageUrl(post.thumbnail_url));
                     }
+                    setPostAuthorUsername(post.author?.username);
 
                     // We must check if auth is still loading. 
                     // If authLoading is true, we don't know the user yet, so we cannot verify permission.
@@ -150,11 +152,13 @@ function WritePageContent() {
 
             if (editId) {
                 await api.put(`/api/posts/${editId}`, formData);
+                // Redirect to the post with username/postId pattern
+                router.push(`/${postAuthorUsername || user?.username}/${editId}`);
             } else {
-                await api.post("/api/posts", formData);
+                const result = await api.post("/api/posts", formData);
+                // Redirect to the new post with username/postId pattern
+                router.push(`/${user?.username}/${result.post._id}`);
             }
-
-            router.push(editId ? `/post/${editId}` : "/feed");
         } catch (err) {
             console.error(err);
             setError(err.message || "Failed to save post");
@@ -178,9 +182,9 @@ function WritePageContent() {
                 <div className="text-sm breadcrumbs mb-6">
                     <ul>
                         <li><Link href="/">Home</Link></li>
-                        {editId ? (
+                        {editId && postAuthorUsername ? (
                             <>
-                                <li><Link href={`/post/${editId}`}>Post</Link></li>
+                                <li><Link href={`/${postAuthorUsername}/${editId}`}>Post</Link></li>
                                 <li>Edit</li>
                             </>
                         ) : (

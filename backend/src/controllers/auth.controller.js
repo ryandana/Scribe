@@ -107,12 +107,13 @@ export const logout = (req, res) => {
 
 export const update = async (req, res) => {
     try {
-        const { email, username, nickname, password } = req.body;
+        const { email, username, nickname, password, bio } = req.body;
         const user = req.user;
 
         if (email) user.email = email;
         if (username) user.username = username;
         if (nickname) user.nickname = nickname;
+        if (bio !== undefined) user.bio = bio;
         if (password) {
             user.password = await bcrypt.hash(password, 12);
         }

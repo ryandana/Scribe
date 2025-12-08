@@ -1,4 +1,5 @@
 import Post from "../models/post.model.js";
+import User from "../models/user.model.js";
 import { saveImage, deleteImage } from "../utils/fileHandler.js";
 
 export const getAllPosts = async (req, res) => {
@@ -17,7 +18,7 @@ export const getAllPosts = async (req, res) => {
         }
 
         const posts = await Post.find(query)
-            .populate("author", "nickname avatar_url")
+            .populate("author", "username nickname avatar_url")
             .sort({ createdAt: -1 });
 
         res.status(200).json({ count: posts.length, posts });
@@ -33,7 +34,7 @@ export const getSinglePost = async (req, res) => {
             req.params.id,
             { $inc: { views: 1 } },
             { new: true }
-        ).populate("author", "nickname avatar_url");
+        ).populate("author", "username nickname avatar_url");
         if (!findPost) {
             return res.status(404).json({ message: "Post not found" });
         }
@@ -229,7 +230,7 @@ export const getMyPosts = async (req, res) => {
     try {
         const userId = req.user.id;
         const posts = await Post.find({ author: userId })
-            .populate("author", "nickname avatar_url")
+            .populate("author", "username nickname avatar_url")
             .sort({ createdAt: -1 });
 
         return res.status(200).json(posts);
@@ -243,10 +244,39 @@ export const getLikedPosts = async (req, res) => {
     try {
         const userId = req.user.id;
         const posts = await Post.find({ likes: userId })
-            .populate("author", "nickname avatar_url")
+            .populate("author", "username nickname avatar_url")
             .sort({ createdAt: -1 });
 
         return res.status(200).json(posts);
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ message: "Internal server error" });
+    }
+};
+
+// Get posts from users that the current user follows
+export const getFollowedPosts = async (req, res) => {
+    try {
+        const userId = req.user.id;
+
+        // Get the current user's following list
+        const currentUser = await User.findById(userId);
+        if (!currentUser) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        const followingIds = currentUser.following;
+
+        if (followingIds.length === 0) {
+            return res.status(200).json({ count: 0, posts: [] });
+        }
+
+        // Get posts from followed users
+        const posts = await Post.find({ author: { $in: followingIds } })
+            .populate("author", "username nickname avatar_url")
+            .sort({ createdAt: -1 });
+
+        return res.status(200).json({ count: posts.length, posts });
     } catch (err) {
         console.error(err);
         return res.status(500).json({ message: "Internal server error" });

@@ -43,6 +43,23 @@ const userSchema = new mongoose.Schema(
             type: String,
             default: null,
         },
+        followers: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "User",
+            },
+        ],
+        following: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "User",
+            },
+        ],
+        bio: {
+            type: String,
+            default: "",
+            maxLength: 500,
+        },
     },
     { timestamps: true }
 );
