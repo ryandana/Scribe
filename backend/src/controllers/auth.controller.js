@@ -167,3 +167,34 @@ export const updateAvatar = async (req, res) => {
         res.status(500).json({ error: "Failed to update avatar" });
     }
 };
+
+export const deleteAccount = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const user = await User.findById(userId);
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        // Delete avatar if exists
+        if (user.avatar_public_id) {
+            await deleteImage(user.avatar_public_id);
+        }
+
+        await User.findByIdAndDelete(userId);
+
+        // Also could delete all user's posts, comments etc. But for now just user.
+        // Actually, let's just clear the cookie
+        res.clearCookie("token", { httpOnly: true });
+
+        return res
+            .status(200)
+            .json({ message: "Account deleted successfully" });
+    } catch (error) {
+        console.error(error.message);
+        return res.status(500).json({
+            message: "Internal Server error",
+        });
+    }
+};

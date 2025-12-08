@@ -64,20 +64,8 @@ export default function Header({ navLinks }) {
           </div>
 
           {/* Desktop Menu */}
+          {/* Desktop Menu - Removed navLinks as per TODO */}
           <div className="navbar-center md:flex hidden">
-            <div className="menu menu-horizontal p-0">
-              {navLinks.map((link) => {
-                return (
-                  <Link
-                    key={link.name}
-                    href={link.href}
-                    className="btn btn-ghost btn-md rounded-btn normal-case text-md font-semibold"
-                  >
-                    {link.name}
-                  </Link>
-                );
-              })}
-            </div>
           </div>
 
           {/* Mobile Menu Button */}
@@ -171,16 +159,7 @@ export default function Header({ navLinks }) {
           >
             <div className="flex-1 flex flex-col justify-center items-center space-y-4 px-6">
               {/* Navigation Links */}
-              {navLinks.map((link) => (
-                <Link
-                  key={link.name}
-                  href={link.href}
-                  onClick={() => setIsOpen(false)}
-                  className="btn btn-ghost btn-lg w-full text-xl font-semibold"
-                >
-                  {link.name}
-                </Link>
-              ))}
+              {/* Navigation Links Removed */}
 
               {/* Auth Section */}
               <div className="divider"></div>

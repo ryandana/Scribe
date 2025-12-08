@@ -1,33 +1,32 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { useRouter } from "next/navigation";
 import Section from "@/components/atoms/section.component";
 import Button from "@/components/ui/button.component";
 import EmailInput from "@/components/ui/email-input.component";
 import UsernameInput from "@/components/ui/username-input.component";
 import { useAuth } from "@/context/auth.context";
 import api from "@/lib/api";
-import { IconPencil, IconUser } from "@tabler/icons-react";
-import Image from "next/image";
+import { IconPencil } from "@tabler/icons-react";
 import Avatar from "@/components/ui/avatar.component";
-
 import { getImageUrl } from "@/lib/imageUrl";
+import MyPostsTab from "@/components/ui/profile-tabs/my-posts.tab";
+import LikedPostsTab from "@/components/ui/profile-tabs/liked-posts.tab";
+import SecurityTab from "@/components/ui/profile-tabs/security.tab";
 
 export default function Profile() {
-  const router = useRouter();
   const { user, loading: authLoading, refreshUser } = useAuth();
+  const [activeTab, setActiveTab] = useState("profile");
+
+  // Profile Form State
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [nickname, setNickname] = useState("");
-  const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [loading, setLoading] = useState(false);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const fileInputRef = useRef(null);
-
-
 
   // Populate form with user data
   useEffect(() => {
@@ -38,7 +37,7 @@ export default function Profile() {
     }
   }, [user]);
 
-  const handleSubmit = async (e) => {
+  const handleProfileUpdate = async (e) => {
     e.preventDefault();
     setError(null);
     setSuccess(null);
@@ -46,11 +45,8 @@ export default function Profile() {
 
     try {
       const updateData = { username, email, nickname };
-      if (password) updateData.password = password;
-
       await api.put("/api/auth/me", updateData);
       setSuccess("Profile updated successfully");
-      setPassword("");
       refreshUser();
     } catch (err) {
       setError(err?.data?.message || err.message || "Failed to update profile");
@@ -71,7 +67,7 @@ export default function Profile() {
     formData.append("avatar", file);
 
     try {
-      await api.put("/api/auth/avatar", formData); // Ensure api.js handles content-type automatically
+      await api.put("/api/auth/avatar", formData);
       setSuccess("Avatar updated successfully");
       refreshUser();
     } catch (err) {
@@ -83,37 +79,24 @@ export default function Profile() {
 
   if (authLoading) {
     return (
-      <Section className="flex items-center justify-center min-h-screen">
-        <div className="loading loading-spinner loading-lg"></div>
-      </Section>
+      <div className="flex h-screen w-full items-center justify-center">
+        <span className="loading loading-spinner loading-lg"></span>
+      </div>
     );
   }
 
-  if (!user) {
-    return null;
-  }
+  if (!user) return null;
 
   const avatarUrl = getImageUrl(user.avatar_url);
 
   return (
-    <Section className="flex flex-col items-center justify-center min-h-screen py-24">
-      {error && (
-        <div className="alert fixed top-24 left-1/2 -translate-x-1/2 alert-error text-sm w-auto z-50 shadow-lg">
-          {error}
-        </div>
-      )}
-      {success && (
-        <div className="alert fixed top-24 left-1/2 -translate-x-1/2 alert-success text-sm w-auto z-50 shadow-lg">
-          {success}
-        </div>
-      )}
-      <div className="card bg-base-100 max-w-lg w-full">
-        <div className="card-body">
-          <h2 className="card-title justify-center text-2xl mb-6">Your Profile</h2>
-
-          {/* Avatar Upload */}
-          <div className="flex justify-center mb-6 relative">
-            <div className="relative group">
+    <Section className="py-24 max-w-5xl mx-auto">
+      <div className="flex flex-col md:flex-row gap-8">
+        {/* Sidebar / Tabs Navigation */}
+        <div className="w-full md:w-1/4 flex flex-col gap-6">
+          {/* User Info Card */}
+          <div className="card bg-base-100 border border-base-200 p-6 flex flex-col items-center text-center">
+            <div className="relative group mb-4">
               <div className="w-24 h-24 rounded-full bg-base-200 overflow-hidden flex items-center justify-center border-2 border-base-200">
                 <Avatar
                   src={avatarUrl}
@@ -137,64 +120,88 @@ export default function Profile() {
                 accept="image/*"
               />
             </div>
+            <h2 className="font-bold text-lg">{user.nickname}</h2>
+            <p className="text-sm text-base-content/60">@{user.username}</p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="form-control column-gap w-full">
-              <label className="label">
-                <span className="label-text">Username</span>
-              </label>
-              <UsernameInput
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                name="username"
-              />
-            </div>
+          {/* Navigation */}
+          <ul className="menu bg-base-100 w-full rounded-box border border-base-200">
+            <li>
+              <a className={activeTab === "profile" ? "active" : ""} onClick={() => setActiveTab("profile")}>
+                My Profile
+              </a>
+            </li>
+            <li>
+              <a className={activeTab === "my-posts" ? "active" : ""} onClick={() => setActiveTab("my-posts")}>
+                My Posts
+              </a>
+            </li>
+            <li>
+              <a className={activeTab === "liked-posts" ? "active" : ""} onClick={() => setActiveTab("liked-posts")}>
+                Liked Posts
+              </a>
+            </li>
+            <li>
+              <a className={activeTab === "security" ? "active" : ""} onClick={() => setActiveTab("security")}>
+                Security
+              </a>
+            </li>
+          </ul>
+        </div>
 
-            <div className="form-control column-gap w-full">
-              <label className="label">
-                <span className="label-text">Email</span>
-              </label>
-              <EmailInput
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                name="email"
-              />
-            </div>
+        {/* Content Area */}
+        <div className="flex-1">
+          <div className="card bg-base-100 border border-base-200">
+            <div className="card-body">
+              {/* Render Content Based on Active Tab */}
+              {activeTab === "profile" && (
+                <div className="space-y-6">
+                  <h2 className="card-title text-2xl">Edit Profile</h2>
+                  {error && <div className="alert alert-error text-sm">{error}</div>}
+                  {success && <div className="alert alert-success text-sm">{success}</div>}
 
-            <div className="form-control column-gap w-full">
-              <label className="label">
-                <span className="label-text">Nickname (Display Name)</span>
-              </label>
-              <input
-                type="text"
-                placeholder="Your nickname"
-                className="input input-bordered w-full"
-                value={nickname}
-                onChange={(e) => setNickname(e.target.value)}
-                name="nickname"
-              />
-            </div>
+                  <form onSubmit={handleProfileUpdate} className="space-y-4">
+                    <div className="form-control w-full">
+                      <label className="label"><span className="label-text">Username</span></label>
+                      <UsernameInput value={username} onChange={(e) => setUsername(e.target.value)} name="username" />
+                    </div>
+                    <div className="form-control w-full">
+                      <label className="label"><span className="label-text">Email</span></label>
+                      <EmailInput value={email} onChange={(e) => setEmail(e.target.value)} name="email" />
+                    </div>
+                    <div className="form-control w-full">
+                      <label className="label"><span className="label-text">Nickname</span></label>
+                      <input type="text" className="input input-bordered w-full" value={nickname} onChange={(e) => setNickname(e.target.value)} name="nickname" />
+                    </div>
+                    <Button className="w-full mt-4" type="submit" disabled={loading}>
+                      {loading ? "Saving..." : "Save Changes"}
+                    </Button>
+                  </form>
+                </div>
+              )}
 
-            <div className="form-control column-gap w-full">
-              <label className="label">
-                <span className="label-text">Change Password</span>
-              </label>
-              <input
-                type="password"
-                placeholder="Leave blank to keep current password"
-                className="input input-bordered w-full"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                name="password"
-                minLength="8"
-              />
-            </div>
+              {activeTab === "my-posts" && (
+                <div className="space-y-6">
+                  <h2 className="card-title text-2xl">My Posts</h2>
+                  <MyPostsTab />
+                </div>
+              )}
 
-            <Button className="w-full mt-4" type="submit" disabled={loading}>
-              {loading ? "Saving..." : "Save Changes"}
-            </Button>
-          </form>
+              {activeTab === "liked-posts" && (
+                <div className="space-y-6">
+                  <h2 className="card-title text-2xl">Liked Posts</h2>
+                  <LikedPostsTab />
+                </div>
+              )}
+
+              {activeTab === "security" && (
+                <div className="space-y-6">
+                  <h2 className="card-title text-2xl">Security</h2>
+                  <SecurityTab />
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </Section>

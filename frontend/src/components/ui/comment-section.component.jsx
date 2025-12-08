@@ -5,7 +5,7 @@ import Avatar from "@/components/ui/avatar.component";
 import { getImageUrl } from "@/lib/imageUrl";
 import timeAgo from "@/lib/timeAgo";
 import { useAuth } from "@/context/auth.context";
-import { IconTrash } from "@tabler/icons-react";
+import { IconSend, IconTrash } from "@tabler/icons-react";
 
 // Comment Item Component
 const CommentItem = ({ comment, replies, addReply, deleteComment, currentUserId, depth = 0 }) => {
@@ -165,15 +165,15 @@ export default function CommentSection({ postId }) {
             {user ? (
                 <form onSubmit={handleSubmit} className="flex gap-4 items-start">
                     <Avatar src={getImageUrl(user.avatar_url)} alt={user.nickname} size={40} />
-                    <div className="flex-1 flex gap-2">
+                    <div className="flex-1 flex gap-2 items-center">
                         <textarea
-                            className="textarea textarea-bordered w-full"
+                            className="textarea textarea-bordered w-full resize-none"
                             placeholder="Add a comment..."
                             rows={2}
                             value={newComment}
                             onChange={(e) => setNewComment(e.target.value)}
                         />
-                        <button type="submit" disabled={!newComment.trim()} className="btn btn-primary">Post</button>
+                        <button type="submit" disabled={!newComment.trim()} className="btn btn-primary rounded-full px-2"><IconSend/></button>
                     </div>
                 </form>
             ) : (

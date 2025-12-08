@@ -4,6 +4,7 @@ import Image from "next/image";
 import timeAgo from "@/lib/timeAgo";
 import { getImageUrl } from "@/lib/imageUrl";
 import { IconEye } from "@tabler/icons-react";
+import VoteControl from "./vote-control.component";
 
 export default function PostsList({ posts }) {
   return (
@@ -43,6 +44,8 @@ export default function PostsList({ posts }) {
                   <div className="badge badge-ghost group-hover:badge-neutral text-sm">
                     {post.tags[0]}
                   </div>
+                  <span>·</span>
+                  <VoteControl post={post} />
                 </div>
                 <div className="flex items-center">
 

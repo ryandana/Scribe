@@ -4,6 +4,7 @@ import Link from "next/link";
 import Avatar from "@/components/ui/avatar.component";
 import { getImageUrl } from "@/lib/imageUrl";
 import { IconEye } from "@tabler/icons-react";
+import VoteControl from "./vote-control.component";
 
 export default function PostsLarge({ posts }) {
   return (
@@ -40,6 +41,8 @@ export default function PostsLarge({ posts }) {
                 <div className="badge badge-ghost group-hover:badge-neutral text-sm">
                   {post.tags[0]}
                 </div>
+                <span>·</span>
+                <VoteControl post={post} />
               </div>
             </div>
           </Link>

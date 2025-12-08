@@ -156,3 +156,95 @@ export const deletePost = async (req, res) => {
         return res.status(500).json({ message: "Internal server error" });
     }
 };
+
+export const toggleVote = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const userId = req.user.id;
+        const { type } = req.body; // 'like' or 'dislike'
+
+        if (!["like", "dislike"].includes(type)) {
+            return res.status(400).json({ message: "Invalid vote type" });
+        }
+
+        const post = await Post.findById(id);
+        if (!post) {
+            return res.status(404).json({ message: "Post not found" });
+        }
+
+        // Helper to check inclusion
+        const liked = post.likes.includes(userId);
+        const disliked = post.dislikes.includes(userId);
+
+        if (type === "like") {
+            if (liked) {
+                // Remove like
+                post.likes = post.likes.filter(
+                    (uid) => uid.toString() !== userId
+                );
+            } else {
+                // Add like, remove dislike if present
+                post.likes.push(userId);
+                if (disliked) {
+                    post.dislikes = post.dislikes.filter(
+                        (uid) => uid.toString() !== userId
+                    );
+                }
+            }
+        } else if (type === "dislike") {
+            if (disliked) {
+                // Remove dislike
+                post.dislikes = post.dislikes.filter(
+                    (uid) => uid.toString() !== userId
+                );
+            } else {
+                // Add dislike, remove like if present
+                post.dislikes.push(userId);
+                if (liked) {
+                    post.likes = post.likes.filter(
+                        (uid) => uid.toString() !== userId
+                    );
+                }
+            }
+        }
+
+        await post.save();
+
+        return res.status(200).json({
+            message: "Vote updated",
+            likes: post.likes,
+            dislikes: post.dislikes,
+        });
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ message: "Internal server error" });
+    }
+};
+
+export const getMyPosts = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const posts = await Post.find({ author: userId })
+            .populate("author", "nickname avatar_url")
+            .sort({ createdAt: -1 });
+
+        return res.status(200).json(posts);
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ message: "Internal server error" });
+    }
+};
+
+export const getLikedPosts = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const posts = await Post.find({ likes: userId })
+            .populate("author", "nickname avatar_url")
+            .sort({ createdAt: -1 });
+
+        return res.status(200).json(posts);
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ message: "Internal server error" });
+    }
+};

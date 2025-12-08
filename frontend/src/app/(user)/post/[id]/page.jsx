@@ -6,6 +6,7 @@ import ReactMarkdown from "react-markdown";
 import { getImageUrl } from "@/lib/imageUrl";
 import { IconEye } from "@tabler/icons-react";
 import CommentSection from "@/components/ui/comment-section.component";
+import VoteControl from "@/components/ui/vote-control.component";
 
 async function getPost(id) {
     try {
@@ -52,6 +53,8 @@ export default async function Page({ params }) {
                             <IconEye size={18} />
                             <span>{post.views || 0}</span>
                         </div>
+                        <span>·</span>
+                        <VoteControl post={post} size={18} />
                     </div>
 
                     <h1 className="text-4xl md:text-5xl font-bold leading-tight">{post.title}</h1>

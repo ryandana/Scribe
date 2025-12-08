@@ -32,8 +32,8 @@
   --radius-box: 1rem;
   --size-selector: 0.25rem;
   --size-field: 0.25rem;
-  --border: 1px;
-  --depth: 0;
+  --border: 1.5px;
+  --depth: 1;
   --noise: 0;
 }
 
@@ -49,7 +49,6 @@ h2 {
 * {
   font-family: var(--font-inter);
 }
-
 
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
