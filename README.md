@@ -1,36 +1,213 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+Berikut **README.md lengkap & rapi** untuk memandu orang menjalankan aplikasi kamu dengan Docker (frontend Next.js + backend Express + MongoDB).
+Tinggal copas ke repo kamu.
 
-## Getting Started
+---
 
-First, run the development server:
+# Fullstack App — Docker Setup Guide
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+This guide explains how to run the **Next.js frontend**, **Express backend**, and **MongoDB** using **Docker & Docker Compose**.
+
+---
+
+# Quick Start
+
+## Install Dependencies
+
+Make sure you have:
+
+* **Docker**
+* **Docker Compose**
+
+Check:
+
+```sh
+docker --version
+docker compose version
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+# Project Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+.
+├── backend/
+│   ├── package.json
+│   ├── server.js
+│   └── ...
+├── frontend/
+│   ├── package.json
+│   ├── next.config.mjs
+│   └── ...
+└── docker-compose.yml
+```
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+# Environment Variables
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Frontend (`frontend/.env`)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
+NEXT_PUBLIC_API_URL=http://backend:8000
+```
 
-## Deploy on Vercel
+## Backend (`backend/.env`)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```
+PORT=8000
+MONGO_URL=mongodb://mongo:27017/mydb
+JWT_SECRET=your-secret
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+> Do not use `localhost` inside Docker containers.
+> Use the **service name** (`backend`, `mongo`) instead.
+
+---
+
+# Starting the App
+
+From the project root:
+
+```sh
+docker compose up -d
+```
+
+To see logs:
+
+```sh
+docker compose logs -f
+```
+
+Stop everything:
+
+```sh
+docker compose down
+```
+
+Rebuild (after code changes, especially `.env`):
+
+```sh
+docker compose build
+docker compose up -d
+```
+
+---
+
+# Accessing the App
+
+| Service  | URL                                            |
+| -------- | ---------------------------------------------- |
+| Frontend | [http://localhost:3000](http://localhost:3000) |
+| Backend  | [http://localhost:8000](http://localhost:8000) |
+| MongoDB  | Internal at `mongo:27017`                      |
+
+---
+
+# docker-compose.yml (Reference)
+
+```yaml
+services:
+
+  frontend:
+    build: ./frontend
+    container_name: frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://backend:8000
+    depends_on:
+      - backend
+
+  backend:
+    build: ./backend
+    container_name: backend
+    ports:
+      - "8000:8000"
+    environment:
+      - MONGO_URL=mongodb://mongo:27017/mydb
+    depends_on:
+      - mongo
+
+  mongo:
+    image: mongo:7
+    container_name: mongo
+    volumes:
+      - mongodb_data:/data/db
+    ports:
+      - "27017:27017"
+
+volumes:
+  mongodb_data:
+```
+
+---
+
+# Development Commands
+
+## Check running containers:
+
+```sh
+docker ps
+```
+
+## Restart only frontend:
+
+```sh
+docker compose restart frontend
+```
+
+## Remove all containers + volumes:
+
+```sh
+docker compose down -v
+```
+
+## Rebuild only frontend:
+
+```sh
+docker compose build frontend
+```
+
+---
+
+# Updating Environment Variables
+
+If you modify `.env` inside frontend or backend:
+
+```sh
+docker compose down
+docker compose build
+docker compose up -d
+```
+
+Next.js **requires rebuild** whenever `NEXT_PUBLIC_*` variables change.
+
+---
+
+# Cleanup (optional)
+
+Remove all Docker images:
+
+```sh
+docker system prune -af
+```
+
+Remove all volumes:
+
+```sh
+docker volume prune -f
+```
+
+---
+
+# You're ready to go!
+
+Your fullstack app is now fully containerized and portable.
+Anyone can run it with a single command:
+
+```sh
+docker compose up -d
+```
+
+---
