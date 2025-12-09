@@ -64,7 +64,7 @@ export default function SecurityTab() {
             <div className="space-y-4">
                 <h3 className="text-lg font-bold">Change Password</h3>
                 <form onSubmit={handlePasswordChange} className="space-y-4">
-                    <div className="form-control w-full">
+                    <div className="column-gap w-full">
                         <label className="label">
                             <span className="label-text">New Password</span>
                         </label>

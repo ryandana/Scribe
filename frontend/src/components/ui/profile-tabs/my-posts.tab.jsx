@@ -62,9 +62,9 @@ export default function MyPostsTab() {
                 <div className="space-y-8">
                     {posts.map(post => (
                         <div key={post._id} className="relative group">
-                            <div className="absolute right-2 top-2 z-10">
+                            <div className="w-full justify-end flex z-10">
                                 <div className="dropdown dropdown-end">
-                                    <div tabIndex={0} role="button" className="btn btn-ghost btn-sm btn-circle">
+                                    <div tabIndex={0} role="button" className="btn btn-neutral btn-sm btn-circle">
                                         <IconDots size={18} />
                                     </div>
                                     <ul tabIndex={0} className="dropdown-content z-1 menu p-2 shadow bg-base-100 rounded-box w-52">

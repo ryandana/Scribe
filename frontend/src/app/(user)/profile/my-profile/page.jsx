@@ -61,19 +61,19 @@ export default function Profile() {
       {success && <div className="alert alert-success text-sm">{success}</div>}
 
       <form onSubmit={handleProfileUpdate} className="space-y-4">
-        <div className="form-control w-full">
+        <div className="column-gap w-full">
           <label className="label"><span className="label-text">Username</span></label>
           <UsernameInput value={username} onChange={(e) => setUsername(e.target.value)} name="username" />
         </div>
-        <div className="form-control w-full">
+        <div className="column-gap w-full">
           <label className="label"><span className="label-text">Email</span></label>
           <EmailInput value={email} onChange={(e) => setEmail(e.target.value)} name="email" />
         </div>
-        <div className="form-control w-full">
+        <div className="column-gap w-full">
           <label className="label"><span className="label-text">Nickname</span></label>
           <input type="text" className="input input-bordered w-full" value={nickname} onChange={(e) => setNickname(e.target.value)} name="nickname" />
         </div>
-        <div className="form-control w-full">
+        <div className="column-gap w-full">
           <label className="label">
             <span className="label-text">Bio</span>
             <span className="label-text-alt text-base-content/60">{bio.length}/50</span>

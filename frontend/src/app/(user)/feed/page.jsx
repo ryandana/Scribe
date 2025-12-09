@@ -26,10 +26,10 @@ export default async function Page() {
         <div className="flex flex-col md:space-y-6 space-y-8 md:w-2/3 w-full">
           {/* Latest Posts Header */}
           <div className="flex w-full items-center justify-between">
-            <h2 className="mb-3 text-xl font-semibold">Latest Posts</h2>
+            <h2 className="mb-3 text-3xl font-bold">Latest Posts</h2>
             <Link
               href="/explore"
-              className="flex items-center text-sm font-semibold gap-1"
+              className="flex items-center text-sm font-bold gap-1"
             >
               See All
               <IconArrowRight size={16} />
@@ -44,7 +44,7 @@ export default async function Page() {
 
           {/* Popular Posts Header */}
           <div className="flex w-full">
-            <h2 className="mb-3 text-xl font-semibold">Popular Posts</h2>
+            <h2 className="mb-3 text-3xl font-bold">Popular Posts</h2>
           </div>
           {/* Popular Posts */}
           <PostsLarge posts={posts} />

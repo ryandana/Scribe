@@ -132,7 +132,7 @@ export default function ProfileLayout({ children }) {
                                         <Icon size={18} />
                                         <span className="flex-1">{item.label}</span>
                                         {item.badge !== undefined && item.badge > 0 && (
-                                            <span className="badge badge-sm badge-primary">{item.badge}</span>
+                                            <span className="badge badge-sm badge-neutral">{item.badge}</span>
                                         )}
                                     </Link>
                                 </li>
