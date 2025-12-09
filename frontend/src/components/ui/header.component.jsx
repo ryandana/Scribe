@@ -59,7 +59,7 @@ export default function Header() {
         <div className="navbar mx-auto container px-4 md:px-6 lg:px-8">
           {/* Logo */}
           <div className="navbar-start">
-            <Link href="/" className="normal-case text-xl font-semibold">
+            <Link href="/" className="normal-case text-xl font-semibold text-neutral">
               Scribe
             </Link>
           </div>

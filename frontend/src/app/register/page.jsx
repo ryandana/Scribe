@@ -7,7 +7,7 @@ import Button from "@/components/ui/button.component";
 import EmailInput from "@/components/ui/email-input.component";
 import PasswordInput from "@/components/ui/password-input.component";
 import UsernameInput from "@/components/ui/username-input.component";
-import Image from "next/image";
+
 import Link from "next/link";
 import api from "@/lib/api";
 import { useAuth } from "@/context/auth.context";
@@ -84,13 +84,10 @@ export default function Register() {
 
   return (
     <Section className="flex md:flex-row-reverse flex-col pt-24">
-      <div className="min-h-[400px] md:min-h-full w-full md:w-1/2 md:block hidden relative md:self-auto self-stretch">
-        <Image
-          src="/dev/test.jpg"
-          alt="Placeholder"
-          fill
-          className="object-cover rounded-lg"
-        />
+      <div className="min-h-[150px] md:min-h-full w-full md:w-1/2 flex items-center justify-center relative md:self-auto self-stretch bg-base-100 rounded-2xl overflow-hidden mb-6 md:mb-0">
+        <span className="text-6xl md:text-[10vw] font-black tracking-tighter text-neutral select-none md:-rotate-12">
+          Scribe
+        </span>
       </div>
       <form
         onSubmit={handleSubmit}
