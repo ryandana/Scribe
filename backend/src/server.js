@@ -16,10 +16,7 @@ const app = express();
 dbConnect();
 
 // Allow requests from the frontend. Configure `CLIENT_URL` in .env for production.
-const clientUrl =
-    process.env.CLIENT_URL ||
-    process.env.CLIENT_ORIGIN ||
-    "http://localhost:3000";
+const clientUrl = [process.env.CLIENT_URL, process.env.CLIENT_DOCKER_URL];
 app.use(
     cors({
         origin: clientUrl,

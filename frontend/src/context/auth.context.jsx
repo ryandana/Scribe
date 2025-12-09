@@ -16,11 +16,20 @@ export function AuthProvider({ children }) {
       setUser(data);
       localStorage.setItem("user", JSON.stringify(data));
     } catch (err) {
+      // If unauthorized (401), force logout to clear invalid cookies
+      if (err.status === 401) {
+        try {
+          await api.post("/api/auth/logout");
+        } catch (e) {
+          console.error("Force logout failed:", e);
+        }
+      }
+
       // Try localStorage fallback if API fails
       try {
         const stored = localStorage.getItem("user");
         if (stored) setUser(JSON.parse(stored));
-      } catch {}
+      } catch { }
       setUser(null);
     }
   };

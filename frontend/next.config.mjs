@@ -1,5 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: "standalone",
+  reactStrictMode: true,
   images: {
     remotePatterns: [
       {
@@ -12,7 +14,7 @@ const nextConfig = {
       },
     ],
   },
-  devIndicators: false
+  devIndicators: false,
 };
 
 export default nextConfig;

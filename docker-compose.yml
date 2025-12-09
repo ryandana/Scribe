@@ -1,18 +1,12 @@
-version: '3.0'
-
 services:
   frontend:
     build: ./frontend
     ports:
       - "3000:3000"
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
     environment:
-      - PORT=3000
       - NEXT_PUBLIC_API_URL=http://backend:8000
     networks:
-      - frontend
+      - scribe
   backend:
     build: ./backend
     ports:
@@ -22,37 +16,41 @@ services:
       - /app/node_modules
     environment:
       - PORT=8000
-      - NODE_ENV=development
+      - BASE_URL=http://backend:8000
+      - CLIENT_DOCKER_URL=http://frontend:3000
+      - CLIENT_URL=http://localhost:3000
       - MONGO_URI=mongodb://mongo:27017
-      - DB_NAME=db_medium_clone
+      - DB_NAME=db_scribe
+      - AI_API_URL=http://ollama:11434
       - JWT_SECRET=secret
       - JWT_EXPIRES_IN=7d
     depends_on:
       - mongo
       - ollama
     networks:
-      - backend
+      - scribe
   mongo:
-    image: mongo:latest
+    image: mongo:8.2.2
+    restart: always
     ports:
       - "27017:27017"
     volumes:
       - mongo_data:/data/db
     networks:
-      - backend
+      - scribe
   ollama:
     image: ollama/ollama
     ports:
       - "11434:11434"
     volumes:
-      - ollama_data:/data
+      - ollama_data:/root/.ollama
     networks:
-      - backend
+      - scribe
 
 volumes:
   mongo_data:
   ollama_data:
 
 networks:
-  backend:
+  scribe:
     driver: bridge
