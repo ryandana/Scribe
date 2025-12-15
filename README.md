@@ -1,8 +1,3 @@
-Berikut **README.md lengkap & rapi** untuk memandu orang menjalankan aplikasi kamu dengan Docker (frontend Next.js + backend Express + MongoDB).
-Tinggal copas ke repo kamu.
-
----
-
 # Fullstack App — Docker Setup Guide
 
 This guide explains how to run the **Next.js frontend**, **Express backend**, and **MongoDB** using **Docker & Docker Compose**.
