@@ -21,6 +21,7 @@ services:
       - BASE_URL=http://backend:8000
       - CLIENT_DOCKER_URL=http://frontend:3000
       - CLIENT_URL=http://localhost:3000
+      - NGROK_URL=https://foal-picked-uniquely.ngrok-free.app
       - MONGO_URI=mongodb://mongo:27017
       - DB_NAME=db_scribe
       - AI_API_URL=http://ollama:11434
