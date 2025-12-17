@@ -4,28 +4,27 @@ export function middleware(request) {
   const token = request.cookies.get("token")?.value;
   const { pathname } = request.nextUrl;
 
-  const publicPaths = [
-    "/",
-    "/login",
-    "/register",
-    "/about",
-    "/privacy",
-    "/terms",
-  ];
+  // Check if the path is inside the (user) protected route group
+  const isProtectedRoute =
+    pathname.startsWith("/@") ||
+    pathname.startsWith("/explore") ||
+    pathname.startsWith("/feed") ||
+    pathname.startsWith("/following") ||
+    pathname.startsWith("/post") ||
+    pathname.startsWith("/profile") ||
+    pathname.startsWith("/write");
 
-  const isPublicPath = publicPaths.some(
-    (path) => pathname === path || pathname.startsWith(path + "/")
-  );
-
-  const isAuthPage =
-    pathname === "/login" || pathname === "/register" || pathname === "/";
-
-  if (token && isAuthPage) {
-    return NextResponse.redirect(new URL("/feed", request.url));
+  // If accessing protected routes without token, redirect to login
+  if (!token && isProtectedRoute) {
+    return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  if (!token && !isPublicPath) {
-    return NextResponse.redirect(new URL("/login", request.url));
+  // If authenticated and accessing public-only pages, redirect to feed
+  if (
+    token &&
+    (pathname === "/" || pathname === "/login" || pathname === "/register")
+  ) {
+    return NextResponse.redirect(new URL("/feed", request.url));
   }
 
   return NextResponse.next();

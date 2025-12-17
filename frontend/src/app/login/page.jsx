@@ -74,7 +74,7 @@ export default function Login() {
   return (
     <Section className="flex md:flex-row-reverse flex-col pt-24">
       <div className="min-h-[150px] md:min-h-full w-full md:w-1/2 flex items-center justify-center relative md:self-auto self-stretch bg-base-100 rounded-2xl overflow-hidden mb-4 md:mb-0">
-        <span className="text-6xl md:text-[10vw] font-black tracking-tighter text-neutral select-none md:-rotate-12">
+        <span className="text-6xl md:text-[10vw] font-black tracking-tighter text-neutral select-none">
           Scribe
         </span>
       </div>

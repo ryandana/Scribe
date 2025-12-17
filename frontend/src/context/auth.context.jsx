@@ -18,22 +18,20 @@ export function AuthProvider({ children }) {
       setUser(data);
       localStorage.setItem("user", JSON.stringify(data));
     } catch (err) {
-      // If unauthorized (401), force logout to clear invalid cookies
-      try {
-        // If status is 401, it means token is invalid/expired
-        if (err.response?.status === 401 || err.status === 401) {
-          await api.post("/api/auth/logout");
-          router.push("/login"); // Force redirect
-        }
-      } catch (e) {
-        console.error("Force logout failed:", e);
+      // If unauthorized (401), token is invalid/expired
+      if (err.response?.status === 401 || err.status === 401) {
+        // Clear localStorage and cookies, then show unauthorized
+        localStorage.removeItem("user");
+        setUser(null);
+        // Middleware will handle the redirect on next page refresh
+        return;
       }
 
-      // Try localStorage fallback if API fails
+      // For other errors, try localStorage fallback
       try {
         const stored = localStorage.getItem("user");
         if (stored) setUser(JSON.parse(stored));
-      } catch { }
+      } catch {}
       setUser(null);
     }
   };
@@ -50,12 +48,13 @@ export function AuthProvider({ children }) {
   const logout = async () => {
     try {
       await api.post("/api/auth/logout", {});
-      router.push("/login"); // Redirect on explicit logout
     } catch (err) {
       console.error("Logout error:", err);
     } finally {
       setUser(null);
       localStorage.removeItem("user");
+      // Clear the token cookie by the backend, then redirect to public page
+      router.push("/");
     }
   };
 

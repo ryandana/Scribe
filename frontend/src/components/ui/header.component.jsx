@@ -25,7 +25,6 @@ export default function Header() {
 
   const handleLogout = async () => {
     await logout();
-    router.push("/");
   };
 
   useEffect(() => {
@@ -59,7 +58,10 @@ export default function Header() {
         <div className="navbar mx-auto container px-4 md:px-6 lg:px-8">
           {/* Logo */}
           <div className="navbar-start">
-            <Link href="/" className="normal-case text-xl font-semibold text-neutral">
+            <Link
+              href="/"
+              className="normal-case text-xl font-semibold text-neutral"
+            >
               Scribe
             </Link>
           </div>
@@ -99,20 +101,12 @@ export default function Header() {
               <>
                 <div className="dropdown dropdown-end">
                   <button className="btn btn-ghost btn-circle avatar placeholder">
-                    <Avatar
-                      src={avatarUrl}
-                      alt={user.nickname}
-                      size={40}
-                    />
+                    <Avatar src={avatarUrl} alt={user.nickname} size={40} />
                   </button>
                   <ul className="dropdown-content z-50 menu p-2 shadow bg-base-100 rounded-box w-64 mt-3 font-medium">
                     <li className="menu-title px-4 py-2">
                       <div className="flex items-center space-x-3">
-                        <Avatar
-                          src={avatarUrl}
-                          alt={user.nickname}
-                          size={40}
-                        />
+                        <Avatar src={avatarUrl} alt={user.nickname} size={40} />
                         <div className="flex-1 min-w-0 text-black">
                           <p className="font-semibold text-base truncate">
                             {user.nickname}
@@ -230,11 +224,7 @@ export default function Header() {
                   className="flex items-center justify-between p-4 hover:bg-base-200 rounded-lg transition-colors mb-3"
                 >
                   <div className="flex items-center space-x-3">
-                    <Avatar
-                      src={avatarUrl}
-                      alt={user.nickname}
-                      size={48}
-                    />
+                    <Avatar src={avatarUrl} alt={user.nickname} size={48} />
                     <div>
                       <p className="font-semibold">{user.nickname}</p>
                       <p className="text-sm opacity-70">{user.email}</p>
@@ -260,4 +250,3 @@ export default function Header() {
     </>
   );
 }
-
